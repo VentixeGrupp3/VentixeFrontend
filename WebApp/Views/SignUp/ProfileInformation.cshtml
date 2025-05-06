@@ -1,0 +1,41 @@
+﻿@model ProfileInformationViewModel
+@{
+    ViewData["Title"] = "Profile Information";
+    Layout = "_AuthenticationLayout";
+}
+
+<div id="signup" class="card">
+    <div class="card-header">
+        <h2 class="card-title">Enter your profile information</h2>
+            @ViewBag?.ErrorMessage
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="ProfileInformation" asp-controller="SignUp" novalidate>
+
+            <div class="form-group">
+                <input asp-for="FirstName" class="form-input" placeholder="First Name" />
+            </div>
+            <div class="form-group">
+                <input asp-for="LastName" class="form-input" placeholder="Last Name" />
+            </div>
+            <div class="form-group">
+                <input asp-for="PhoneNumber" class="form-input" placeholder="Phone Number" />
+            </div>
+            <div class="form-group">
+                <input asp-for="StreetName" class="form-input" placeholder="Street Name" />
+            </div>
+            <div class="form-group">
+                <input asp-for="PostalCode" class="form-input" placeholder="Postal Code" />
+            </div>
+            <div class="form-group">
+                <input asp-for="City" class="form-input"placeholder="City" />
+            </div>
+            <button type="submit" class="btn btn-primary">Continue</button>
+        </form>
+    </div>
+    <div class="card-footer">
+       
+    </div>
+</div>
+
+

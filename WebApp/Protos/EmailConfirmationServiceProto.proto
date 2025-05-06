@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "WebApp.Protos";
+
+package EmailConfirmationServiceProto;
+
+message CodeConfirmationRequest {
+	string email = 1;
+	string code = 2;
+}
+
+message EmailConfirmationRequest {	
+	string email = 1;
+}
+
+
+message EmailConfirmationResponse {
+	bool succeeded = 1;
+	string message = 2;
+}
+
+message CodeConfirmationRespone {
+	bool succeeded = 1;
+	string message = 2;
+}
+
+service EmailConfirmation {
+	rpc SendEmail (EmailConfirmationRequest) returns (EmailConfirmationResponse);
+	rpc ConfirmCode (CodeConfirmationRequest) returns (CodeConfirmationRespone);
+}

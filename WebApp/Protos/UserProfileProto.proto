@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+option csharp_namespace = "WebApp.Protos";
+
+message getUserProfileByIdRequest {
+	string id = 1;
+}
+message getUserProfileByAppUserIdRequest {
+	string appUserId = 1;
+}
+
+message createUserProfileRequest {
+	string appUserId = 1;
+	string firstName = 2;
+	string lastName = 3;
+	string phoneNumber = 4;
+	string streetName = 5;
+	string postalCode = 6;
+	string city = 7;
+
+}
+
+message createUserProfileResponse {
+	
+		string id = 1;
+		string appUserId = 2;
+		string firstName = 3;
+		string lastName = 4;
+		string phoneNumber = 5;
+		string streetName = 6;
+		string postalCode = 7;
+		string city = 8;
+}
+
+
+message getUserProfileByIdResponse {
+	
+		string id = 1;
+		string appUserId = 2;
+		string firstName = 3;
+		string lastName = 4;
+		string phoneNumber = 5;
+		string streetName = 6;
+		string postalCode = 7;
+		string city = 8;
+}
+
+message updateUserProfileRequest {
+	
+		string id = 1;
+		string firstName = 2;
+		string lastName = 3;
+		string phoneNumber = 4;
+		string streetName = 5;
+		string postalCode = 6;
+		string city = 7;
+
+}
+
+message updateUserProfileResponse {
+	
+		string id = 1;
+		string appUserId = 2;
+		string firstName = 3;
+		string lastName = 4;
+		string phoneNumber = 5;
+		string streetName = 6;
+		string postalCode = 7;
+		string city = 8;
+}
+
+message deleteUserProfileRequest {
+	
+		string id = 1;
+
+}
+
+message deleteUserProfileResponse {
+	
+		
+	bool succeeded = 1;
+	string message = 2;
+}
+
+service UserProfileProtoService {
+	rpc getUserProfileById (getUserProfileByIdRequest) returns (getUserProfileByIdResponse);
+	rpc getUserProfileByAppUserId (getUserProfileByAppUserIdRequest) returns (getUserProfileByIdResponse);
+	rpc createUserProfile (createUserProfileRequest) returns (createUserProfileResponse);
+	rpc updateUserProfile (updateUserProfileRequest) returns (updateUserProfileResponse);
+	rpc deleteUserProfile (deleteUserProfileRequest) returns (deleteUserProfileResponse);
+
+}

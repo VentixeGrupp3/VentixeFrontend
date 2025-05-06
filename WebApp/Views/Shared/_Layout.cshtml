@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApp</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="portal-wrapper">
+    <header>
+        <div class="header-info">
+            <h2>@ViewData["Title"]</h2>
+            <span class="header-info-text">Hello User, Welcome back</span>
+        </div>
+
+        <input type="text" id="nav-search" class="header-search" placeholder="Search anything" />
+
+         <div class="header-user">
+                <div class="header-user-profile">
+                    <div class="header-user-avatar">AU</div>
+                    <div class="header-user-info">
+                        <div class="header-user-name">App User</div>
+                        <div class="header-user-role">Admin</div>
+                    </div>
+                </div>
+            </div>
+    </header> 
+    <nav class="sidebar">
+        <div class="nav-logo">
+            <img src="https://ventixe.blob.core.windows.net/ventixe-container/ventixeLogo.svg" alt="Logo" />
+        </div>
+        <ul class="nav-menu">
+                <li class="nav-item">
+                    <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/grid_view_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Dashboard" />
+                    </div>
+                    <a asp-controller="Home" asp-action="Dashboard"> 
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/check_box_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Bookings" />
+
+                    
+                </div>
+                    <a asp-controller="Bookings" asp-action="Bookings"> 
+                        <span class="nav-text">Bookings</span>
+                    </a>
+                </li>
+
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/receipt_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Invoices" />
+                </div>
+                <a asp-controller="Invoices" asp-action="Invoices">
+                    <span class="nav-text">Invoices</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/mail_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Inbox" />
+                </div>
+                <a asp-controller="Inbox" asp-action="Inbox">
+                    <span class="nav-text">Invoices</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/calendar_month_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Calendar" />
+                </div>
+                <a asp-controller="Calendar" asp-action="Calendar">
+                    <span class="nav-text">Calendar</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/local_activity_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Events" />
+                </div>
+                <a asp-controller="Events" asp-action="Events">
+                    <span class="nav-text">Events</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/payments_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Financials" />
+                </div>
+                <a asp-controller="Financials" asp-action="Financials">
+                    <span class="nav-text">Financials</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/photo_library_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Gallery" />
+                </div>
+                <a asp-controller="Gallery" asp-action="Gallery">
+                    <span class="nav-text">Gallery</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/star_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Feedback" />
+                </div>
+                <a asp-controller="Feedback" asp-action="Feedback">
+                    <span class="nav-text">Feedback</span>
+                </a>
+            </li>
+
+        </ul>
+
+
+        <div class="nav-banner">
+            <img src="https://ventixe.blob.core.windows.net/ventixe-container/Promotional Banner.svg" alt="Logo" />
+        </div>
+
+        
+         <div class="nav-item">
+                <div class="nav-icon">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/logout_24dp_000_FILL0_wght400_GRAD0_opsz24.svg"   alt="Logout" />
+                 </div>
+                 <span class="nav-text">Sign Out</span>
+        </div>
+      
+    </nav>
+  
+    <main>    
+        @RenderBody()
+    </main>
+    <footer>
+        <div class="footer-body">
+        <p>Ventixe &copy; @DateTime.Now.Year - All rights reserved</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms and Conditions</a>
+            <a href="#">Contact</a>
+
+        </div>
+        </div>
+
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    </div>
+
+</body>
+</html>
