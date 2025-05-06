@@ -1,0 +1,66 @@
+﻿Your ignore rules go here
+@'
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Publish output
+**/publish/
+**/out/
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# DotCover
+*.dotCover
+
+# IIS Express
+/.vs/
+/iisexpress/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+# NuGet
+*.nupkg
+packages/
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+
+# Rider
+.idea/
+
+# Others
+*.dbmdl
+*.jfm
+*.db
+
+# Entity Framework
+Migrations/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+'@ | Out-File -Encoding utf8 .gitignore
