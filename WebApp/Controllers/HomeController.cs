@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
-//[Authorize]
+[Authorize]
 public class HomeController : Controller
 {
 

@@ -1,6 +1,8 @@
 ﻿@model LoginViewModel
 @{
     ViewData["Title"] = "Login";
+    Layout = "_AuthenticationLayout";
+
 }
 
 <div class="center-wrapper">
@@ -22,7 +24,7 @@
                     <input asp-for="Password" class="form-input" value="@Model?.Password" />
                 </div>
 
-                <button type="submit" class="btn-primary">Log In</button>
+                <button type="submit" class="btn btn-primary">Log In</button>
             </div>
             <div class="login-card-footer info">
                 <span>Don't have an account?</span>

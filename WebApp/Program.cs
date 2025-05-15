@@ -1,3 +1,4 @@
+using Grpc.Net.ClientFactory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Data;
@@ -15,7 +16,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<VerificationService>();
-
 builder.Services.ConfigureApplicationCookie(x =>
 {
     x.LoginPath = "/login";
@@ -30,15 +30,24 @@ builder.Services.ConfigureApplicationCookie(x =>
 builder.Services.AddGrpcClient<EmailConfirmation.EmailConfirmationClient>(options =>
 {
     options.Address = new Uri(builder.Configuration.GetConnectionString("EmailConfirmationGrpcConnectionString"));
+    
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler();
+    return handler;
 });
 builder.Services.AddGrpcClient<UserProfileProtoService.UserProfileProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration.GetConnectionString("UserProfileGrpcConnectionString"));
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler();
+    return handler;
 });
 
 
 
-var app = builder.Build();
+    var app = builder.Build();
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseRouting();

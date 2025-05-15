@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Messaging.ServiceBus;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using WebApp.Identity;
 using WebApp.Models;
 using WebApp.Protos;
@@ -6,11 +8,12 @@ using WebApp.Services;
 
 namespace WebApp.Controllers;
 
-public class SignUpController(IAccountService accountService, VerificationService verificationService, UserProfileProtoService.UserProfileProtoServiceClient userProfileClient) : Controller
+public class SignUpController(IAccountService accountService, VerificationService verificationService, UserProfileProtoService.UserProfileProtoServiceClient userProfileClient, IConfiguration configuration) : Controller
 {
     private readonly IAccountService _accountService = accountService;
     private readonly VerificationService _verificationService = verificationService;
     private readonly UserProfileProtoService.UserProfileProtoServiceClient _userProfileClient = userProfileClient;
+    private readonly IConfiguration _configuration = configuration;
 
 
 
@@ -140,29 +143,27 @@ public class SignUpController(IAccountService accountService, VerificationServic
 
 
     [HttpPost("profile-information")]
-    public IActionResult ProfileInformation(ProfileInformationViewModel model)
+    public async Task<IActionResult> ProfileInformationAsync(ProfileInformationViewModel model)
     {
         if (!ModelState.IsValid)
             return View(model);
 
-       var userId = TempData["UserId"]?.ToString();
-       var result = _userProfileClient.createUserProfile(new createUserProfileRequest
-        {
+        var userId = TempData["UserId"]?.ToString();
+        var request = new createUserProfileRequest() { 
             AppUserId = userId,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            PhoneNumber = model.PhoneNumber,
             StreetName = model.StreetName,
+            City = model.City,
+            PhoneNumber = model.PhoneNumber,
             PostalCode = model.PostalCode,
-            City = model.City
-        });
+        };
+        var serviceBusClient = new ServiceBusClient(_configuration.GetConnectionString("AzureServiceBus"));
+        var sender = serviceBusClient.CreateSender("userprofile");
 
-        if (result == null)
-        {
-            ViewBag.ErrorMessage = "Error creating user profile";
-            return View(model);
-        }
-        return RedirectToAction("Index", "Login");
+        var message = new ServiceBusMessage(JsonSerializer.Serialize(request));
+        await sender.SendMessageAsync(message);
+        return RedirectToAction("Index", "Home");
     }
 
     #endregion

@@ -29,6 +29,7 @@ public class AccountService(SignInManager<AppUser> signInManager) : IAccountServ
     public async Task<SignInResult> LoginAsync(AppUser user, string password)
     {
         var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+        _signInManager.UserManager.GetRolesAsync(user);
         return result;
     }
 
