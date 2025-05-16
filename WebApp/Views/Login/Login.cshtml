@@ -5,12 +5,12 @@
 
 }
 
-<div class="center-wrapper">
+<div class="wrapper">
     <form id="login" method="post">
         <input type="hidden" name="returnUrl" value="@ViewBag?.ReturnUrl" />
 
-        <div class="login-card">
-            <div class="login-card-header">
+        <div class="card">
+            <div class="card-header">
                 <h2>@ViewData["Title"]</h2>
             </div>
             <div class="login-card-body">
@@ -28,7 +28,7 @@
             </div>
             <div class="login-card-footer info">
                 <span>Don't have an account?</span>
-                <a asp-controller="Auth" asp-action="SignUp">Sign Up</a>
+                <a asp-controller="SignUp" asp-action="">Sign Up</a>
             </div>
         </div>
     </form>

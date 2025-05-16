@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebApp.Identity;
+using WebApp.Protos;
 namespace WebApp.Services;
 
 
@@ -7,12 +8,14 @@ public interface IAccountService
 {
     Task<IdentityResult> CreateAccountAsync(AppUser user, string password);
     Task<AppUser?> FindByEmailAsync(string email);
+    Task<string> GetUserNameAsync(string userId);
     Task<SignInResult> LoginAsync(AppUser user, string password);
     Task SignOutAsync();
 }
-public class AccountService(SignInManager<AppUser> signInManager) : IAccountService
+public class AccountService(SignInManager<AppUser> signInManager, UserProfileProtoService.UserProfileProtoServiceClient client) : IAccountService
 {
     private readonly SignInManager<AppUser> _signInManager = signInManager;
+    private readonly UserProfileProtoService.UserProfileProtoServiceClient _client = client;
 
     public async Task<AppUser?> FindByEmailAsync(string email)
     {
@@ -29,8 +32,20 @@ public class AccountService(SignInManager<AppUser> signInManager) : IAccountServ
     public async Task<SignInResult> LoginAsync(AppUser user, string password)
     {
         var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
-        _signInManager.UserManager.GetRolesAsync(user);
         return result;
+    }
+
+    public async Task<IdentityResult> DeleteAccountAsync(AppUser user)
+    {
+        var result = await _signInManager.UserManager.DeleteAsync(user);
+        return result;
+    }
+
+    public async Task<string> GetUserNameAsync(string userId)
+    {
+        var result = _client.getUserProfileByAppUserId(new getUserProfileByAppUserIdRequest() { AppUserId = userId });
+        var userName = result.FirstName + " " + result.LastName;
+        return userName;
     }
 
     public async Task SignOutAsync()

@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using WebApp.Identity
+@inject IAccountService _accountService;
+@inject UserManager<AppUser> _userManager;
+@{
+    var user = await _userManager.GetUserAsync(User);
+    var userId = user.Id;
+    var userName = await _accountService.GetUserNameAsync(userId);
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,20 +22,29 @@
     <header>
         <div class="header-info">
             <h2>@ViewData["Title"]</h2>
-            <span class="header-info-text">Hello User, Welcome back</span>
+            <span class="header-info-text">Hello @userName.Split(" ")[0], Welcome back</span>
         </div>
 
         <input type="text" id="nav-search" class="header-search" placeholder="Search anything" />
 
+        <div class="header-user-dropdown">
          <div class="header-user">
                 <div class="header-user-profile">
-                    <div class="header-user-avatar">AU</div>
+                    <div class="header-user-avatar">@userName[0]</div>
                     <div class="header-user-info">
-                        <div class="header-user-name">App User</div>
+                        <div class="header-user-name">@userName</div>
                         <div class="header-user-role">Admin</div>
                     </div>
                 </div>
             </div>
+                <div class="header-user-dropdown">
+                    <div class="header-user-dropdown-content">
+                        <a href="#" class="header-user-dropdown-item">Profile Settings</a>
+                        <a href="#" class="header-user-dropdown-item">Notifications</a>
+                        <a href="#" class="header-user-dropdown-item">Help Center</a>
+                    </div>
+                </div>
+        </div>
     </header> 
     <nav class="sidebar">
         <div class="nav-logo">
