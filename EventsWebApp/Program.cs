@@ -1,50 +1,46 @@
-using System.Net.Http.Headers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer;
+using EventsWebApp.Extensions;
+using EventsWebApp.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1) MVC
-builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient();
-
-
-// 2) Read our Services:EventsApi section
-var eventsApiSection = builder.Configuration.GetSection("Services:EventsApi");
-var eventsApiBase  = eventsApiSection["BaseUrl"];
-var apiKey         = eventsApiSection["AdminApiKey"];   // match your JSON key
-
-// 3) Register named HttpClient
-builder.Services.AddHttpClient("EventsApi", client =>
+try
 {
-    client.BaseAddress = new Uri(eventsApiBase);
-    client.DefaultRequestHeaders.Accept.Add(
-        new MediaTypeWithQualityHeaderValue("application/json"));
-    if (!string.IsNullOrWhiteSpace(apiKey))
-    {
-        client.DefaultRequestHeaders.Add("x-api-key", apiKey);
-    }
-});
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
+    
+    // In production, you would add more sophisticated logging like:
+    // builder.Logging.AddApplicationInsights();
 
-// 4) Logging, etc.
-builder.Services.AddLogging();
+    builder.Services.AddControllersWithViews();
 
-var app = builder.Build();
+    builder.Services.AddApplicationServices(builder.Configuration);
 
-if (!app.Environment.IsDevelopment())
+    builder.Services.ValidateServiceRegistration();
+
+    var app = builder.Build();
+
+    app.UseApplicationMiddleware(app.Environment);
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+
+    app.MapHealthChecks("/health");
+
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("EventsWebApp started successfully at {Timestamp}", DateTime.UtcNow);
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    var logger = LoggerFactory.Create(builder => builder.AddConsole())
+        .CreateLogger<Program>();
+    
+    logger.LogCritical(ex, "Application failed to start at {Timestamp}", DateTime.UtcNow);
+    
+    throw;
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name:      "default",
-    pattern:   "{controller=Events}/{action=Index}/{id?}"
-);
-
-app.Run();
+public partial class Program { }
