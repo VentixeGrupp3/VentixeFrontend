@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* Import Font Awesome for icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* Adjust these paths to match your project structure */
+@import url('colors.css');
+@import url('typography.css');
+@import url('components.css');
+@import url('layout.css');
+@import url('events.css');
+@import url('responsive.css');
+
+/* Browser resets */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    font-family: 'Inter', sans-serif;
+    color: var(--vx-gray-100);
+    background-color: var(--vx-gray-20);
+    height: 100%;
+}
+
+/* Ticket styling */
+.ticket-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+    .ticket-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+.ticket-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--vx-primary-100, #F26CF9);
+    margin-bottom: 0.75rem;
+}
+
+.ticket-button {
+    margin-top: auto;
+}

@@ -1,0 +1,115 @@
+﻿html {
+    font-family: var(--font);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    line-height: 1.5;
+}
+
+/* Headings */
+h1 {
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--headline-color);
+}
+
+h2 {
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--headline-color);
+}
+
+h3 {
+    font-size: 26px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--headline-color);
+}
+
+h4 {
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 600;
+    color: var(--headline-color);
+}
+
+h5 {
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--headline-color);
+}
+
+h6 {
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--headline-color);
+}
+
+/* Title styles (for subtitles, section headings) */
+.title-lg {
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.title-md {
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.title-sm {
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.title-xs {
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Body text styles */
+.body-lg {
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--text-color);
+}
+
+.body-md {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--text-color);
+}
+
+.body-sm {
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--text-muted-color);
+}
+
+.body-xs {
+    font-size: 11px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: var(--text-muted-color);
+}
+
+/* Button text*/
+.btn-text {
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 600;
+    color: inherit;
+}

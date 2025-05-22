@@ -1,0 +1,57 @@
+﻿/* Ticket styling */
+.ticket-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--vx-gray-30);
+}
+
+.ticket-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.ticket-card {
+    background-color: var(--vx-gray-10);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    border: 1px solid var(--vx-gray-30);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .ticket-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .ticket-card h4 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+.ticket-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--vx-primary-100);
+    margin-bottom: 0.75rem;
+}
+
+.ticket-description {
+    color: var(--vx-gray-80);
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.ticket-availability {
+    font-size: 0.875rem;
+    color: var(--vx-gray-70);
+    margin-bottom: 1rem;
+}
+
+.ticket-button {
+    align-self: flex-start;
+}

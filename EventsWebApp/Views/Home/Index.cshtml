@@ -1,0 +1,55 @@
+﻿@using EventsWebApp.Models
+@using EventsWebApp.ViewModels
+@model IEnumerable<EventCardViewModel>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="portal-wrapper">
+    <header>
+        <h1>Event Dashboard</h1>
+        <p>Welcome to your event management portal</p>
+    </header>
+    <main>
+        <div class="card">
+            <div class="card-header">
+                <h2>Upcoming Events</h2>
+            </div>
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="event-list">
+                        @foreach (var eventItem in Model)
+                        {
+                            <div class="event-item">
+                                <h3>@eventItem.EventName</h3>
+                                <p>@eventItem.EventDate.ToString("yyyy-MM-dd") - @eventItem.EventTime.ToString(@"hh\:mm")</p>
+                                <p class="additional-info">
+                                    <i class="fas fa-map-marker-alt"></i> @eventItem.Location
+                                </p>
+                                <a href="@Url.Action("Details", "Events", new { id = eventItem.EventId })" class="btn btn-primary">View Details</a>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No upcoming events found.</p>
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2>Quick Actions</h2>
+            </div>
+            <div class="card-body">
+                <a href="@Url.Action("Create", "Events")" class="btn btn-primary">Create New Event</a>
+                <a href="@Url.Action("Index", "Events")" class="btn">View All Events</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p class="additional-info center">&copy; @DateTime.Now.Year - Event Management System</p>
+    </footer>
+</div>

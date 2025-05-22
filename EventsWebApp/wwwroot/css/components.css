@@ -1,0 +1,295 @@
+﻿/* Base Button */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--vx-gray-100);
+    border: 1px solid var(--vx-gray-40);
+    background-color: var(--vx-gray-20);
+    transition: all 0.2s ease-in-out;
+    border-radius: 25px;
+    padding: 0.75rem 1.25rem;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+    .btn:hover {
+        background-color: var(--vx-gray-30);
+        text-decoration: none;
+    }
+
+.btn-primary {
+    color: #fff;
+    border: 1px solid var(--vx-primary-100);
+    background-color: var(--vx-primary-100);
+}
+
+    .btn-primary:hover {
+        background-color: var(--vx-primary-90);
+        border-color: var(--vx-primary-90);
+    }
+
+
+/* Card */
+.card {
+    background-color: var(--vx-gray-10);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--vx-gray-100);
+    margin: 0;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Form Group (stacked inputs) */
+.form-group {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Event Detail Components */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.detail-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--vx-gray-80);
+    font-size: 0.875rem;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.event-image {
+    width: 100%;
+    height: 300px;
+    background-color: var(--vx-gray-30);
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--vx-gray-30);
+}
+
+    .section:last-child {
+        border-bottom: none;
+    }
+
+/* Ticket Categories */
+.ticket-categories {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.ticket-category {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--vx-gray-10);
+    border-radius: 0.75rem;
+    border: 1px solid var(--vx-gray-30);
+}
+
+.ticket-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ticket-name {
+    font-weight: 600;
+    color: var(--vx-gray-100);
+}
+
+.ticket-description {
+    font-size: 0.875rem;
+    color: var(--vx-gray-80);
+}
+
+.ticket-price {
+    font-weight: 600;
+    color: var(--vx-primary-100);
+}
+
+/* Seat Plan */
+.seat-plan {
+    background-color: var(--vx-gray-10);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.seat-map {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.seat-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.legend-color {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* Text Inputs */
+.form-input {
+    border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    outline: none;
+    color: var(--vx-gray-100);
+    border: 1px solid var(--vx-gray-40);
+    background-color: var(--vx-gray-10);
+    font-size: 1em;
+}
+
+/* Sidebar Nav Links */
+.nav-links {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    color: var(--vx-secondary-100);
+    transition: background-color 0.2s ease;
+    border-radius: 12px;
+    margin: 0 1rem;
+}
+
+    .nav-link:hover {
+        background-color: var(--vx-gray-20);
+        text-decoration: none;
+    }
+
+    .nav-link.active {
+        background-color: var(--vx-primary-50);
+        color: var(--vx-primary-100);
+        font-weight: 500;
+    }
+
+/* Icon styles */
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.icon-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+.icon-lg {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Fix for icon alignment */
+button, a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+/* Spinner */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--vx-gray-30);
+    border-top-color: var(--vx-primary-100);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

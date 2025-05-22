@@ -1,0 +1,99 @@
+﻿@model EventsWebApp.ViewModels.CreateEventDto
+
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<h2>Create Event</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.EventName)
+        @Html.TextBoxFor(m => m.EventName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.EventName, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.CategoryId, "Category")
+        @Html.DropDownListFor(
+                 model => model.CategoryId,
+                 ViewBag.Categories as SelectList,
+                 "-- Select Category --",
+                 new { @class = "form-control" }
+                 )
+
+        @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Description)
+        @Html.TextAreaFor(m => m.Description, 5, 50, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+    </div>
+
+    <hr />
+
+    @Html.HiddenFor(m => m.OwnerId)
+    <div class="form-row">
+        <div class="col">
+            @Html.LabelFor(m => m.OwnerName)
+            @Html.TextBoxFor(m => m.OwnerName, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+        <div class="col">
+            @Html.LabelFor(m => m.OwnerEmail)
+            @Html.TextBoxFor(m => m.OwnerEmail, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Location)
+        @Html.TextBoxFor(m => m.Location, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.VenueName)
+        @Html.TextBoxFor(m => m.VenueName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.VenueName, "", new { @class = "text-danger" })
+    </div>
+
+    <hr />
+
+    <div class="form-row">
+        <div class="col">
+            @Html.LabelFor(m => m.EventDate)
+            @Html.TextBoxFor(m => m.EventDate, new { @type = "date", @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.EventDate, "", new { @class = "text-danger" })
+        </div>
+        <div class="col">
+            @Html.LabelFor(m => m.EventTime)
+            @Html.TextBoxFor(m => m.EventTime, new { @type = "time", @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.EventTime, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Capacity)
+        @Html.TextBoxFor(m => m.Capacity, new { @type = "number", min = "0", @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Capacity, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Status)
+        @Html.TextBoxFor(m => m.Status, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Event</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
