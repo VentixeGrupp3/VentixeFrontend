@@ -15,7 +15,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         if (dto == null)
         {
             _logger.LogWarning("Attempted to map null EventDto");
-            return new Event(); // Return empty event rather than throwing
+            return new Event();
         }
 
         try
@@ -36,13 +36,13 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 Capacity = Math.Max(0, dto.Capacity),
                 TicketsSold = Math.Max(0, dto.TicketsSold),
                 Status = dto.Status ?? "Draft",
-                TicketCategories = new List<TicketCategory>() // Will be populated separately if needed
+                TicketCategories = new List<TicketCategory>()
             };
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error mapping EventDto to Event domain model");
-            return new Event(); // Return empty event rather than crashing
+            return new Event();
         }
     }
     public EventDto MapToEventDto(Event domainModel)
@@ -55,7 +55,6 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
-            // Combine date and time strings back into DateTime for API
             var eventDateTime = domainModel.GetEventDateTime();
 
             return new EventDto
@@ -95,7 +94,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             {
                 EventId = domainModel.EventId,
                 EventName = domainModel.EventName,
-                EventCategory = category?.Name ?? "Uncategorized", // Use category name or fallback
+                EventCategory = category?.Name ?? "Uncategorized",
                 Description = domainModel.Description ?? string.Empty,
                 Location = domainModel.Location,
                 VenueName = domainModel.VenueName ?? string.Empty,
@@ -103,7 +102,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 EventTime = domainModel.EventTime,
                 TicketsSold = domainModel.TicketsSold,
                 Capacity = domainModel.Capacity,
-                TicketCategories = new List<TicketCategoryViewModel>() // Will add if needed
+                TicketCategories = new List<TicketCategoryViewModel>()
             };
         }
         catch (Exception ex)
@@ -156,7 +155,6 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
-            // Parse the date and time for proper DateTime/TimeSpan objects
             var eventDateTime = domainModel.GetEventDateTime();
 
             return new EventCardViewModel
@@ -170,7 +168,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 Location = domainModel.Location,
                 Capacity = domainModel.Capacity,
                 TicketsSold = domainModel.TicketsSold,
-                TicketCategories = new List<TicketCategoryViewModel>() // Will be populated if needed
+                TicketCategories = new List<TicketCategoryViewModel>()
             };
         }
         catch (Exception ex)
@@ -217,11 +215,11 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             return new TicketCategory
             {
                 TicketId = dto.TicketId ?? Guid.NewGuid().ToString(),
-                TicketCategory = dto.TicketCategory ?? string.Empty,
-                Price = Math.Max(0, dto.Price), // Ensure non-negative price
+                Category = dto.TicketCategory ?? string.Empty,
+                Price = Math.Max(0, dto.Price),
                 AvailableQuantity = dto.AvailableQuantity,
                 Description = dto.Description ?? string.Empty,
-                IsAvailable = dto.IsPurchasable() // Use DTO's business logic
+                IsAvailable = dto.IsPurchasable()
             };
         }
         catch (Exception ex)
@@ -242,14 +240,12 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
-            // Create lookup dictionary for efficient category finding
             var categoryLookup = (categories ?? Enumerable.Empty<Category>())
                 .Where(c => !string.IsNullOrWhiteSpace(c.CategoryId))
                 .ToDictionary(c => c.CategoryId, c => c);
 
             return events.Select(evt => 
             {
-                // Find matching category efficiently
                 categoryLookup.TryGetValue(evt.CategoryId, out var category);
                 return MapToEventListViewModel(evt, category);
             }).ToList();
@@ -271,7 +267,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         return new TicketCategoryDto
         {
             TicketId = domainModel.TicketId,
-            TicketCategory = domainModel.TicketCategory,
+            TicketCategory = domainModel.Category,
             Price = domainModel.Price,
             AvailableQuantity = domainModel.AvailableQuantity,
             Description = domainModel.Description

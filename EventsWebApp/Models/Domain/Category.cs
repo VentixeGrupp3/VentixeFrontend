@@ -12,15 +12,11 @@ public class Category
 
     public bool IsActive { get; set; } = true;
 
+
     public bool CanCreateEvents()
     {
         return IsActive && !string.IsNullOrWhiteSpace(Name);
     }
-
-    /// <summary>
-    /// Helper method to get display-friendly category name.
-    /// Falls back to ID if name is missing (shouldn't happen in normal operation).
-    /// </summary>
     public string GetDisplayName()
     {
         return string.IsNullOrWhiteSpace(Name) ? CategoryId : Name;

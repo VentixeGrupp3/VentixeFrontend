@@ -30,17 +30,14 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-        // Configure strongly-typed configuration objects
         services.Configure<ApiConfiguration>(
             configuration.GetSection(ApiConfiguration.SectionName));
         
         services.Configure<ApplicationConfiguration>(
             configuration.GetSection(ApplicationConfiguration.SectionName));
 
-        // Register configuration service
         services.AddSingleton<IConfigurationService, ConfigurationService>();
 
-        // Validate configuration at startup
         var serviceProvider = services.BuildServiceProvider();
         var configService = serviceProvider.GetRequiredService<IConfigurationService>();
         
@@ -60,26 +57,21 @@ public static class ServiceCollectionExtensions
         {
             var configService = serviceProvider.GetRequiredService<IConfigurationService>();
             
-            // Configure base address
             var baseUrl = configService.GetEventsApiBaseUrl();
             client.BaseAddress = new Uri(baseUrl);
             
-            // Configure timeout
             client.Timeout = configService.GetApiTimeout();
             
-            // Configure headers
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
             
-            // Add API key if available
             var apiKey = configService.GetEventsApiKey();
             if (!string.IsNullOrWhiteSpace(apiKey))
             {
                 client.DefaultRequestHeaders.Add("x-api-key", apiKey);
             }
             
-            // Add user agent for API identification
             client.DefaultRequestHeaders.UserAgent.ParseAdd("EventsWebApp/1.0");
         });
 
@@ -87,10 +79,8 @@ public static class ServiceCollectionExtensions
     }
     private static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
-        // Register API communication service
         services.AddScoped<IEventsApiService, EventsApiService>();
         
-        // Register mapping service for converting between models
         services.AddScoped<IModelMappingService, ModelMappingService>();
         
         return services;
@@ -98,7 +88,6 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddUtilityServices(this IServiceCollection services)
     {
-        // Register error handling service
         services.AddScoped<IErrorHandlingService, ErrorHandlingService>();
         
         return services;
@@ -108,10 +97,8 @@ public static class ServiceCollectionExtensions
         this IApplicationBuilder app, 
         IWebHostEnvironment env)
     {
-        // Add error handling middleware first (catches errors from other middleware)
         app.UseMiddleware<ErrorHandlingMiddleware>();
 
-        // Add standard ASP.NET Core middleware
         if (!env.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
@@ -141,7 +128,6 @@ public static class ServiceCollectionExtensions
             serviceProvider.GetRequiredService<IModelMappingService>();
             serviceProvider.GetRequiredService<IErrorHandlingService>();
             
-            // Validate HTTP client registration
             var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
             httpClientFactory.CreateClient("EventsApi"); // Should not throw
             

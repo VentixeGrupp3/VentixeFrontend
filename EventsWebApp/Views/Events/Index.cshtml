@@ -63,19 +63,40 @@
                     <h3 class="event-card-title">@item.EventName</h3>
                     <div class="event-meta">
                         <div class="event-date-location">
-                            <div><i class="far fa-calendar"></i> @item.EventDate</div>
-                            <div><i class="far fa-clock"></i> @item.EventTime</div>
+                            @if (!string.IsNullOrEmpty(item.EventDate))
+                            {
+                                <div><i class="far fa-calendar"></i> @item.EventDate</div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.EventTime))
+                            {
+                                <div><i class="far fa-clock"></i> @item.EventTime</div>
+                            }
                             <div><i class="fas fa-map-marker-alt"></i> @item.Location</div>
                         </div>
                     </div>
                     <div class="event-progress">
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: @(item.Capacity > 0 ? (item.TicketsSold * 100 / item.Capacity) : 0)%"></div>
+                            <div class="progress-fill" style="width: @(item.TicketsSoldPercentage)%"></div>
                         </div>
                         <div class="progress-meta">
-                            <span>@(item.Capacity > 0 ? (item.TicketsSold * 100 / item.Capacity) : 0)% Tickets Sold</span>
-                            <span class="event-price">$@(item.TicketCategories?.FirstOrDefault()?.Price ?? 0)</span>
+                            <span>@(item.TicketsSoldPercentage)% Tickets Sold</span>
+                            <span class="event-price">
+                                @if (item.StartingPrice.HasValue)
+                                {
+                                    @($"${item.StartingPrice.Value:F2}")
+                                }
+                                else
+                                {
+                                    <text>Price TBD</text>
+                                }
+                            </span>
                         </div>
+                    </div>
+                    <div class="event-actions">
+                        <a href="@Url.Action("Details", "Events", new { id = item.EventId })"
+                           class="btn btn-primary">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
@@ -85,12 +106,15 @@
     {
         <div class="no-events-message">
             <p>No events found. Try creating your first event!</p>
+            <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Event
+            </a>
         </div>
     }
 </div>
 
 <div class="pagination">
-    <span>Showing 8 out of 48</span>
+    <span>Showing @(Model?.Count() ?? 0) events</span>
     <div class="pagination-controls">
         <a href="#" class="page-btn prev"><i class="fas fa-chevron-left"></i></a>
         <a href="#" class="page-num active">1</a>

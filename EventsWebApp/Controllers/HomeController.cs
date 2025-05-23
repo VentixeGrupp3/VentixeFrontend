@@ -11,9 +11,9 @@ public class HomeController(
     IModelMappingService mappingService,
     ILogger<HomeController> logger) : Controller
 {
-    private readonly IEventsApiService _eventsApiService = eventsApiService ?? throw new ArgumentNullException(nameof(eventsApiService));
-    private readonly IModelMappingService _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
-    private readonly ILogger<HomeController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IEventsApiService _eventsApiService = eventsApiService;
+    private readonly IModelMappingService _mappingService = mappingService;
+    private readonly ILogger<HomeController> _logger = logger;
 
     public async Task<IActionResult> Index()
     {

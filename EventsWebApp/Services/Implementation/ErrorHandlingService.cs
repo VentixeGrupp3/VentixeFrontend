@@ -6,8 +6,8 @@ public class ErrorHandlingService(
     ILogger<ErrorHandlingService> logger,
     IConfigurationService configurationService) : IErrorHandlingService
 {
-private readonly ILogger<ErrorHandlingService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-private readonly IConfigurationService _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
+private readonly ILogger<ErrorHandlingService> _logger = logger;
+private readonly IConfigurationService _configurationService = configurationService;
 
     public string HandleApiError(HttpResponseMessage response)
     {
@@ -28,7 +28,6 @@ private readonly IConfigurationService _configurationService = configurationServ
             _ => "An error occurred while communicating with the server."
         };
 
-        // Log the technical details for developers
         _logger.LogWarning("API error: {StatusCode} - {ReasonPhrase}", 
                           response.StatusCode, response.ReasonPhrase);
 
@@ -42,13 +41,11 @@ private readonly IConfigurationService _configurationService = configurationServ
             return "An unknown error occurred.";
         }
 
-        // In development, provide more detailed error messages
         if (_configurationService.IsDevelopment())
         {
             return $"Error: {exception.Message}";
         }
 
-        // In production, provide generic messages for security
         var userMessage = exception switch
         {
             ArgumentException => "Invalid input provided.",
@@ -66,7 +63,6 @@ private readonly IConfigurationService _configurationService = configurationServ
     {
         try
         {
-            // Create structured log entry
             var logData = new
             {
                 Message = message,
@@ -85,8 +81,6 @@ private readonly IConfigurationService _configurationService = configurationServ
                 _logger.LogWarning("Warning: {Message}. Context: {@Context}", message, logData);
             }
 
-            // In production, you might also send critical errors to external monitoring
-            // services like Application Insights, Sentry, or similar
             if (!_configurationService.IsDevelopment() && IsCriticalError(exception))
             {
                 await SendToCriticalErrorMonitoring(logData);
@@ -94,7 +88,6 @@ private readonly IConfigurationService _configurationService = configurationServ
         }
         catch (Exception loggingException)
         {
-            // If logging itself fails, fall back to basic console logging
             Console.WriteLine($"Logging failed: {loggingException.Message}");
             Console.WriteLine($"Original error: {message}");
         }

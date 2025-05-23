@@ -4,27 +4,19 @@ using System.Net;
 using System.Text.Json;
 
 namespace EventsWebApp.Middleware;
-public class ErrorHandlingMiddleware
+public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _next = next ?? throw new ArgumentNullException(nameof(next));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly RequestDelegate _next = next;
+    private readonly ILogger<ErrorHandlingMiddleware> _logger = logger;
 
     public async Task InvokeAsync(HttpContext context, IErrorHandlingService errorHandlingService)
     {
         try
         {
-            // Continue to next middleware in the pipeline
             await _next(context);
         }
         catch (Exception ex)
         {
-            // Log the error with full details for developers
             await errorHandlingService.LogErrorAsync(
                 "Unhandled exception in request pipeline", 
                 ex, 
@@ -35,7 +27,6 @@ public class ErrorHandlingMiddleware
                     IPAddress = context.Connection.RemoteIpAddress?.ToString()
                 });
 
-            // Handle the error and return appropriate response to user
             await HandleExceptionAsync(context, ex, errorHandlingService);
         }
     }
@@ -44,26 +35,22 @@ public class ErrorHandlingMiddleware
         Exception exception, 
         IErrorHandlingService errorHandlingService)
     {
-        // Determine HTTP status code and user message based on exception type
         var (statusCode, userMessage) = GetErrorResponse(exception, errorHandlingService);
 
-        // Set response properties
         context.Response.StatusCode = (int)statusCode;
         context.Response.ContentType = "application/json";
 
-        // Check if this is an AJAX request or API call
         if (IsAjaxRequest(context) || IsApiRequest(context))
         {
-            // Return JSON error response for AJAX/API requests
             await WriteJsonErrorResponse(context, statusCode, userMessage, exception);
         }
         else
         {
-            // Redirect to error page for regular page requests
             await HandlePageErrorResponse(context, statusCode, userMessage, exception);
         }
     }
 
+    //AI generated method to handle error responses
     private static (HttpStatusCode statusCode, string userMessage) GetErrorResponse(
         Exception exception, 
         IErrorHandlingService errorHandlingService)
@@ -80,7 +67,6 @@ public class ErrorHandlingMiddleware
             TimeoutException => (HttpStatusCode.RequestTimeout, "The request timed out. Please try again."),
             NotImplementedException => (HttpStatusCode.NotImplemented, "This feature is not yet available."),
             
-            // Default case for unexpected exceptions
             _ => (HttpStatusCode.InternalServerError, errorHandlingService.HandleException(exception))
         };
     }
@@ -113,7 +99,6 @@ public class ErrorHandlingMiddleware
         string userMessage, 
         Exception exception)
     {
-        // Store error information in TempData for the error page
         if (context.Features.Get<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionaryFactory>() != null)
         {
             try
@@ -132,7 +117,6 @@ public class ErrorHandlingMiddleware
             }
         }
 
-        // Redirect to appropriate error page based on status code
         var errorPath = statusCode switch
         {
             HttpStatusCode.NotFound => "/Home/NotFound",
@@ -141,7 +125,6 @@ public class ErrorHandlingMiddleware
             _ => "/Home/Error"
         };
 
-        // Perform redirect
         context.Response.Redirect(errorPath);
         await Task.CompletedTask;
     }

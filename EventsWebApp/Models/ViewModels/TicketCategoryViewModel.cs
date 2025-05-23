@@ -7,6 +7,7 @@ public class TicketCategoryViewModel
     public decimal Price { get; set; }
     public int AvailableQuantity { get; set; }
     public string Description { get; set; } = string.Empty;
+
     public string FormattedPrice
     {
         get
@@ -14,7 +15,6 @@ public class TicketCategoryViewModel
             return Price == 0 ? "Free" : $"${Price:F2}";
         }
     }
-
     public string AvailabilityMessage
     {
         get

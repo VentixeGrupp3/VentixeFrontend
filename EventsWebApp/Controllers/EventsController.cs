@@ -11,9 +11,9 @@ public class EventsController(
     IModelMappingService mappingService,
     ILogger<EventsController> logger) : Controller
 {
-    private readonly IEventsApiService _eventsApiService = eventsApiService ?? throw new ArgumentNullException(nameof(eventsApiService));
-    private readonly IModelMappingService _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
-    private readonly ILogger<EventsController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IEventsApiService _eventsApiService = eventsApiService;
+    private readonly IModelMappingService _mappingService = mappingService;
+    private readonly ILogger<EventsController> _logger = logger;
 
     public async Task<IActionResult> Index()
     {
@@ -286,12 +286,11 @@ public class EventsController(
     {
         var tickets = new List<TicketCategory>();
             
-        // Use category ID to determine ticket types (simplified from original logic)
         if (categoryId?.Contains("music", StringComparison.OrdinalIgnoreCase) == true)
         {
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "General Admission", 
+                Category = "General Admission", 
                 Price = 49.99m, 
                 AvailableQuantity = 100,
                 Description = "Standard entry to the concert"
@@ -299,7 +298,7 @@ public class EventsController(
                 
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "VIP Experience", 
+                Category = "VIP Experience", 
                 Price = 149.99m, 
                 AvailableQuantity = 25,
                 Description = "Premium viewing area with complimentary drinks"
@@ -309,7 +308,7 @@ public class EventsController(
         {
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "Standard Pass", 
+                Category = "Standard Pass", 
                 Price = 199.99m, 
                 AvailableQuantity = 250,
                 Description = "Full conference access"
@@ -317,7 +316,7 @@ public class EventsController(
                 
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "Workshop Pass", 
+                Category = "Workshop Pass", 
                 Price = 299.99m, 
                 AvailableQuantity = 50,
                 Description = "Conference access plus hands-on workshops"
@@ -327,7 +326,7 @@ public class EventsController(
         {
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "Standard Entry", 
+                Category = "Standard Entry", 
                 Price = 29.99m, 
                 AvailableQuantity = 100,
                 Description = "General admission"
@@ -335,7 +334,7 @@ public class EventsController(
                 
             tickets.Add(new TicketCategory 
             { 
-                TicketCategory = "Premium Experience", 
+                Category = "Premium Experience", 
                 Price = 79.99m, 
                 AvailableQuantity = 30,
                 Description = "Enhanced experience with premium benefits"
@@ -344,7 +343,7 @@ public class EventsController(
             
         tickets.Add(new TicketCategory 
         { 
-            TicketCategory = "Early Bird Special", 
+            Category = "Early Bird Special", 
             Price = 19.99m, 
             AvailableQuantity = Math.Max(10, new Random().Next(5, 30)),
             Description = "Limited availability - book early and save!"

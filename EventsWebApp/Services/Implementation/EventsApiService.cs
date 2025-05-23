@@ -23,50 +23,43 @@ public class EventsApiService(
         {
             _logger.LogInformation("Fetching all events from API");
 
-            // Make the HTTP request to the API
             var response = await _httpClient.GetAsync("api/events");
 
-            // Check if the request was successful
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("API request failed: {ErrorMessage}", errorMessage);
-                return Enumerable.Empty<Event>(); // Return empty list instead of throwing
+                return Enumerable.Empty<Event>();
             }
 
-            // Read and deserialize the response
             var jsonContent = await response.Content.ReadAsStringAsync();
             var eventDtos = JsonSerializer.Deserialize<List<EventDto>>(jsonContent, GetJsonOptions())
                            ?? new List<EventDto>();
 
             _logger.LogInformation("Successfully retrieved {Count} events from API", eventDtos.Count);
 
-            // Convert DTOs to domain models using our mapping service
             var events = eventDtos.Select(dto => _mappingService.MapToEvent(dto));
             return events;
         }
         catch (HttpRequestException ex)
         {
-            // Network-related errors (connection issues, timeouts, etc.)
             await _errorHandlingService.LogErrorAsync("Network error while fetching events", ex);
             return Enumerable.Empty<Event>();
         }
         catch (JsonException ex)
         {
-            // JSON parsing errors (API returned invalid JSON)
             await _errorHandlingService.LogErrorAsync("Failed to parse events JSON response", ex);
             return Enumerable.Empty<Event>();
         }
         catch (Exception ex)
         {
-            // Any other unexpected errors
             await _errorHandlingService.LogErrorAsync("Unexpected error while fetching events", ex);
             return Enumerable.Empty<Event>();
         }
     }
     public async Task<Event?> GetEventByIdAsync(string eventId)
     {
-        // Validate input - fail fast with clear error message
         if (string.IsNullOrWhiteSpace(eventId))
         {
             _logger.LogWarning("GetEventByIdAsync called with null or empty eventId");
@@ -82,12 +75,12 @@ public class EventsApiService(
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 _logger.LogInformation("Event {EventId} not found", eventId);
-                return null; // Event doesn't exist - this is normal, not an error
+                return null;
             }
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("Failed to retrieve event {EventId}: {ErrorMessage}", eventId, errorMessage);
                 return null;
             }
@@ -113,7 +106,6 @@ public class EventsApiService(
 
     public async Task<bool> CreateEventAsync(Event eventModel)
     {
-        // Validate input
         if (eventModel == null)
         {
             _logger.LogWarning("CreateEventAsync called with null event model");
@@ -124,7 +116,6 @@ public class EventsApiService(
         {
             _logger.LogInformation("Creating new event: {EventName}", eventModel.EventName);
 
-            // Convert domain model to DTO for API communication
             var createDto = new CreateEventDto
             {
                 EventName = eventModel.EventName,
@@ -141,7 +132,6 @@ public class EventsApiService(
                 Status = eventModel.Status
             };
 
-            // Serialize and send to API
             var jsonContent = JsonSerializer.Serialize(createDto, GetJsonOptions());
             var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
@@ -154,7 +144,7 @@ public class EventsApiService(
             }
             else
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("Failed to create event {EventName}: {ErrorMessage}", 
                                   eventModel.EventName, errorMessage);
                 return false;
@@ -179,7 +169,6 @@ public class EventsApiService(
         {
             _logger.LogInformation("Updating event {EventId}: {EventName}", eventId, eventModel.EventName);
 
-            // Create update DTO with only updateable fields
             var updateDto = new UpdateEventDto
             {
                 Title = eventModel.EventName,
@@ -201,7 +190,7 @@ public class EventsApiService(
             }
             else
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("Failed to update event {EventId}: {ErrorMessage}", eventId, errorMessage);
                 return false;
             }
@@ -234,7 +223,7 @@ public class EventsApiService(
             }
             else
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("Failed to delete event {EventId}: {ErrorMessage}", eventId, errorMessage);
                 return false;
             }
@@ -252,10 +241,8 @@ public class EventsApiService(
         {
             _logger.LogInformation("Fetching categories from API");
 
-            // Try the primary endpoint first
             var response = await _httpClient.GetAsync("api/categories");
 
-            // If that fails, try the alternative endpoint mentioned in original code
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogInformation("Primary categories endpoint failed, trying alternative");
@@ -264,7 +251,7 @@ public class EventsApiService(
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = await _errorHandlingService.HandleApiError(response);
+                var errorMessage = _errorHandlingService.HandleApiError(response);
                 _logger.LogWarning("Failed to retrieve categories: {ErrorMessage}", errorMessage);
                 return Enumerable.Empty<Category>();
             }
@@ -287,13 +274,11 @@ public class EventsApiService(
     {
         try
         {
-            // Simple health check - try to get a minimal response from API
             var response = await _httpClient.GetAsync("api/health");
             return response.IsSuccessStatusCode;
         }
         catch
         {
-            // Any exception means API is not healthy
             return false;
         }
     }
@@ -302,9 +287,9 @@ public class EventsApiService(
     {
         return new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true, // Handle case differences between API and our models
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Standard web API naming
-            WriteIndented = false // Minimize payload size
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
         };
     }
 }

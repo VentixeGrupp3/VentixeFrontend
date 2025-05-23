@@ -34,10 +34,8 @@ public class ConfigurationService(
 
     public string GetEventsApiKey()
     {
-        // First try to get from environment variable (secure approach)
         var apiKey = Environment.GetEnvironmentVariable("EVENTS_API_KEY");
         
-        // Fallback to configuration (for development only)
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             apiKey = _apiConfig.AdminApiKey;
@@ -48,7 +46,6 @@ public class ConfigurationService(
             }
         }
 
-        // In development, allow missing API key with warning
         if (string.IsNullOrWhiteSpace(apiKey) && IsDevelopment())
         {
             _logger.LogWarning("No API key configured - API calls may fail");
@@ -66,7 +63,6 @@ public class ConfigurationService(
     {
         var timeoutSeconds = _apiConfig.TimeoutSeconds;
         
-        // Ensure reasonable bounds
         if (timeoutSeconds < 5)
         {
             _logger.LogWarning("API timeout too low ({Seconds}s), using minimum of 5 seconds", timeoutSeconds);
@@ -85,7 +81,6 @@ public class ConfigurationService(
         var isValid = true;
         var validationErrors = new List<string>();
 
-        // Validate API configuration
         try
         {
             var baseUrl = GetEventsApiBaseUrl();
@@ -101,7 +96,6 @@ public class ConfigurationService(
             isValid = false;
         }
 
-        // Validate API key (only in production)
         if (!IsDevelopment())
         {
             try
@@ -120,7 +114,6 @@ public class ConfigurationService(
             }
         }
 
-        // Log validation results
         if (isValid)
         {
             _logger.LogInformation("Configuration validation passed");
@@ -137,7 +130,6 @@ public class ConfigurationService(
     {
         return _appConfig.Environment;
     }
-
     public bool IsDevelopment()
     {
         return string.Equals(_appConfig.Environment, "Development", StringComparison.OrdinalIgnoreCase);
