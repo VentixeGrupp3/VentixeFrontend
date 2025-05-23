@@ -6,8 +6,6 @@
 @import url('tickets.css');
 @import url('responsive.css');
 
-@import url('layout.css');
-
 
 *, *::before, *::after {
     box-sizing: border-box;
