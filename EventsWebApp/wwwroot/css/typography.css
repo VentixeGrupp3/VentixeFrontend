@@ -1,115 +1,189 @@
 ﻿html {
-    font-family: var(--font);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     color: var(--text-color);
     background-color: var(--background-color);
     line-height: 1.5;
+    font-size: 16px;
 }
 
-/* Headings */
 h1 {
-    font-size: 32px;
-    line-height: 1.1;
+    font-size: 2rem;
+    line-height: 1.2;
     font-weight: 700;
-    color: var(--headline-color);
+    color: var(--text-dark);
+    margin: 0 0 1rem 0;
 }
 
 h2 {
-    font-size: 28px;
-    line-height: 1.1;
+    font-size: 1.75rem;
+    line-height: 1.2;
     font-weight: 700;
-    color: var(--headline-color);
+    color: var(--text-dark);
+    margin: 0 0 0.875rem 0;
 }
 
 h3 {
-    font-size: 26px;
-    line-height: 1.1;
-    font-weight: 700;
-    color: var(--headline-color);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 0.75rem 0;
 }
 
 h4 {
-    font-size: 24px;
-    line-height: 1.1;
+    font-size: 1.25rem;
+    line-height: 1.3;
     font-weight: 600;
-    color: var(--headline-color);
+    color: var(--text-dark);
+    margin: 0 0 0.625rem 0;
 }
 
 h5 {
-    font-size: 22px;
-    line-height: 1.2;
+    font-size: 1.125rem;
+    line-height: 1.3;
     font-weight: 600;
-    color: var(--headline-color);
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
 }
 
 h6 {
-    font-size: 20px;
-    line-height: 1.2;
+    font-size: 1rem;
+    line-height: 1.4;
     font-weight: 600;
-    color: var(--headline-color);
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
 }
 
-/* Title styles (for subtitles, section headings) */
-.title-lg {
-    font-size: 18px;
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.title-md {
-    font-size: 16px;
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.title-sm {
-    font-size: 14px;
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.title-xs {
-    font-size: 12px;
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-/* Body text styles */
-.body-lg {
-    font-size: 16px;
-    line-height: 1.5;
+p {
+    font-size: 1rem;
+    line-height: 1.6;
     font-weight: 400;
     color: var(--text-color);
+    margin: 0 0 1rem 0;
 }
 
-.body-md {
-    font-size: 14px;
+.text-lg {
+    font-size: 1.125rem;
     line-height: 1.5;
-    font-weight: 400;
-    color: var(--text-color);
 }
 
-.body-sm {
-    font-size: 12px;
-    line-height: 1.5;
-    font-weight: 400;
-    color: var(--text-muted-color);
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.4;
 }
 
-.body-xs {
-    font-size: 11px;
-    line-height: 1.5;
-    font-weight: 400;
-    color: var(--text-muted-color);
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1.3;
 }
 
-/* Button text*/
-.btn-text {
-    font-size: 14px;
-    line-height: 1.2;
+.text-muted {
+    color: var(--text-light);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-secondary {
+    color: var(--secondary-color);
+}
+
+.text-success {
+    color: var(--success-color);
+}
+
+.text-warning {
+    color: var(--warning-color);
+}
+
+.text-error {
+    color: var(--error-color);
+}
+
+.text-bold {
+    font-weight: 700;
+}
+
+.text-semibold {
     font-weight: 600;
-    color: inherit;
 }
+
+.text-medium {
+    font-weight: 500;
+}
+
+.text-normal {
+    font-weight: 400;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+.btn {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    line-height: 1.4;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+    a:hover {
+        color: var(--link-hover);
+        text-decoration: underline;
+    }
+
+    a:focus,
+    button:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
+        a:focus:not(:focus-visible),
+        button:focus:not(:focus-visible) {
+            outline: none;
+        }

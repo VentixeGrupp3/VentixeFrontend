@@ -1,29 +1,35 @@
-﻿/* Ticket styling */
-.ticket-section {
+﻿.ticket-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--vx-gray-30);
+    border-top: 1px solid var(--border-light);
 }
+
+    .ticket-section h4 {
+        margin-bottom: 1rem;
+        color: var(--text-dark);
+        font-weight: 600;
+    }
 
 .ticket-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
     margin-top: 1rem;
 }
 
 .ticket-card {
-    background-color: var(--vx-gray-10);
+    background-color: var(--background-color);
     border-radius: 0.75rem;
     padding: 1.25rem;
-    border: 1px solid var(--vx-gray-30);
+    border: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
 }
 
     .ticket-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
@@ -31,27 +37,75 @@
         margin-top: 0;
         margin-bottom: 0.5rem;
         font-weight: 600;
+        color: var(--text-dark);
+        font-size: 1.125rem;
     }
 
 .ticket-price {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: var(--vx-primary-100);
+    color: var(--primary-color);
     margin-bottom: 0.75rem;
 }
 
 .ticket-description {
-    color: var(--vx-gray-80);
+    color: var(--text-color);
     margin-bottom: 1rem;
     flex-grow: 1;
+    font-size: 0.875rem;
+    line-height: 1.4;
 }
 
 .ticket-availability {
     font-size: 0.875rem;
-    color: var(--vx-gray-70);
+    color: var(--text-light);
     margin-bottom: 1rem;
+    font-weight: 500;
 }
+
+    .ticket-availability.limited {
+        color: var(--warning-color);
+    }
+
+    .ticket-availability.sold-out {
+        color: var(--error-color);
+    }
 
 .ticket-button {
     align-self: flex-start;
+    min-width: 120px;
 }
+
+    .ticket-button:disabled {
+        background-color: var(--gray-400);
+        color: var(--gray-600);
+        cursor: not-allowed;
+    }
+
+        .ticket-button:disabled:hover {
+            background-color: var(--gray-400);
+            transform: none;
+        }
+
+.ticket-info {
+    background-color: var(--background-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+    .ticket-info:last-child {
+        margin-bottom: 0;
+    }
+
+    .ticket-info strong {
+        color: var(--text-dark);
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .ticket-info span {
+        color: var(--text-light);
+        font-size: 0.875rem;
+    }

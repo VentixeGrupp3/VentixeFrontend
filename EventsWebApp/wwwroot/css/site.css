@@ -3,7 +3,6 @@
 @import url('colors.css');
 @import url('layout.css');
 @import url('components.css');
-@import url('events.css');
 
 *, *::before, *::after {
     box-sizing: border-box;
