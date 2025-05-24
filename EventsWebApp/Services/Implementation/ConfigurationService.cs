@@ -21,7 +21,7 @@ public class ConfigurationService(
         if (IsDevelopment() && string.IsNullOrWhiteSpace(baseUrl))
         {
             _logger.LogWarning("No API base URL configured, using development default");
-            return "https://localhost:7103";
+            return "https://ventixegrupp3-ajgbb3hpacbxbhf4.swedencentral-01.azurewebsites.net";
         }
 
         if (string.IsNullOrWhiteSpace(baseUrl))

@@ -20,6 +20,10 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
+            // Safe date/time extraction
+            var eventDate = dto.Date != default(DateTime) ? dto.Date.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
+            var eventTime = dto.Date != default(DateTime) ? dto.Date.ToString("HH:mm") : "00:00";
+
             return new Event
             {
                 EventId = dto.EventId ?? string.Empty,
@@ -31,8 +35,8 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 OwnerEmail = dto.OwnerEmail ?? string.Empty,
                 Location = dto.Location ?? string.Empty,
                 VenueName = dto.VenueName,
-                EventDate = dto.GetDateString(),
-                EventTime = dto.GetTimeString(),
+                EventDate = eventDate,
+                EventTime = eventTime,
                 Capacity = Math.Max(0, dto.Capacity),
                 TicketsSold = Math.Max(0, dto.TicketsSold),
                 Status = dto.Status ?? "Draft",
@@ -45,6 +49,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             return new Event();
         }
     }
+
     public EventDto MapToEventDto(Event domainModel)
     {
         if (domainModel == null)
@@ -80,6 +85,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             return new EventDto();
         }
     }
+
     public EventListViewModel MapToEventListViewModel(Event domainModel, Category? category = null)
     {
         if (domainModel == null)
@@ -94,7 +100,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             {
                 EventId = domainModel.EventId,
                 EventName = domainModel.EventName,
-                EventCategory = category?.Name ?? "Uncategorized",
+                EventCategory = category?.Name ?? GetCategoryName(domainModel.CategoryId) ?? "Uncategorized",
                 Description = domainModel.Description ?? string.Empty,
                 Location = domainModel.Location,
                 VenueName = domainModel.VenueName ?? string.Empty,
@@ -102,7 +108,9 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 EventTime = domainModel.EventTime,
                 TicketsSold = domainModel.TicketsSold,
                 Capacity = domainModel.Capacity,
-                TicketCategories = new List<TicketCategoryViewModel>()
+                TicketCategories = domainModel.TicketCategories?
+                    .Select(MapToTicketCategoryViewModel)
+                    .ToList() ?? new List<TicketCategoryViewModel>()
             };
         }
         catch (Exception ex)
@@ -110,6 +118,21 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             _logger.LogError(ex, "Error mapping Event to EventListViewModel");
             return new EventListViewModel();
         }
+    }
+
+    private string? GetCategoryName(string categoryId)
+    {
+        return categoryId switch
+        {
+            "1" => "Music",
+            "2" => "Technology", 
+            "3" => "Health & Wellness",
+            "4" => "Food & Culinary",
+            "5" => "Art & Design",
+            "6" => "Fashion",
+            "7" => "Outdoor & Adventure",
+            _ => null
+        };
     }
 
     public EventFormViewModel MapToEventFormViewModel(Event domainModel)
@@ -131,11 +154,11 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 EventDate = domainModel.EventDate,
                 EventTime = domainModel.EventTime,
                 Location = domainModel.Location,
-                VenueName = domainModel.VenueName,
+                VenueName = domainModel.VenueName ?? string.Empty, // Fix for CS8601
                 Capacity = domainModel.Capacity,
-                TicketCategories = domainModel.TicketCategories
-                    .Select(tc => MapToTicketCategoryDto(tc))
-                    .ToList()
+                TicketCategories = domainModel.TicketCategories?
+                    .Select(MapToTicketCategoryViewModel)
+                    .ToList() ?? new List<TicketCategoryViewModel>()
             };
         }
         catch (Exception ex)
@@ -164,11 +187,13 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 Description = domainModel.Description ?? string.Empty,
                 EventCategory = string.Empty,
                 EventDate = eventDateTime.Date,
-                EventTime = eventDateTime.TimeOfDay,
+                EventTime = eventDateTime,
                 Location = domainModel.Location,
                 Capacity = domainModel.Capacity,
                 TicketsSold = domainModel.TicketsSold,
-                TicketCategories = new List<TicketCategoryViewModel>()
+                TicketCategories = domainModel.TicketCategories?
+                    .Select(MapToTicketCategoryViewModel)
+                    .ToList() ?? new List<TicketCategoryViewModel>()
             };
         }
         catch (Exception ex)
@@ -177,6 +202,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             return new EventCardViewModel();
         }
     }
+
     public Category MapToCategory(CategoryDto dto)
     {
         if (dto == null)
@@ -189,10 +215,9 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         {
             return new Category
             {
-                CategoryId = dto.CategoryId ?? string.Empty,
+                CategoryId = dto.Id.ToString(),
                 Name = dto.Name ?? string.Empty,
                 Description = dto.Description,
-                IsActive = true
             };
         }
         catch (Exception ex)
@@ -257,6 +282,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         }
     }
 
+    // Private helper methods
     private TicketCategoryDto MapToTicketCategoryDto(TicketCategory domainModel)
     {
         if (domainModel == null)
@@ -264,13 +290,46 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
             return new TicketCategoryDto();
         }
 
-        return new TicketCategoryDto
+        try
         {
-            TicketId = domainModel.TicketId,
-            TicketCategory = domainModel.Category,
-            Price = domainModel.Price,
-            AvailableQuantity = domainModel.AvailableQuantity,
-            Description = domainModel.Description
-        };
+            return new TicketCategoryDto
+            {
+                TicketId = domainModel.TicketId,
+                TicketCategory = domainModel.Category,
+                Price = domainModel.Price,
+                AvailableQuantity = domainModel.AvailableQuantity,
+                Description = domainModel.Description
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error mapping TicketCategory to TicketCategoryDto");
+            return new TicketCategoryDto();
+        }
+    }
+
+    private TicketCategoryViewModel MapToTicketCategoryViewModel(TicketCategory domainModel)
+    {
+        if (domainModel == null)
+        {
+            return new TicketCategoryViewModel();
+        }
+
+        try
+        {
+            return new TicketCategoryViewModel
+            {
+                TicketId = domainModel.TicketId,
+                TicketCategory = domainModel.Category,
+                Price = domainModel.Price,
+                AvailableQuantity = domainModel.AvailableQuantity,
+                Description = domainModel.Description
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error mapping TicketCategory to TicketCategoryViewModel");
+            return new TicketCategoryViewModel();
+        }
     }
 }

@@ -63,15 +63,15 @@
                     <h3 class="event-card-title">@item.EventName</h3>
                     <div class="event-meta">
                         <div class="event-date-location">
-                            @if (!string.IsNullOrEmpty(item.EventDate))
+                            @if (!string.IsNullOrEmpty(item.EventDate) && DateTime.TryParse(item.EventDate, out DateTime eventDate))
                             {
-                                <div><i class="far fa-calendar"></i> @item.EventDate</div>
+                                <div><i class="far fa-calendar"></i> @eventDate.ToString("MMM dd, yyyy")</div>
                             }
-                            @if (!string.IsNullOrEmpty(item.EventTime))
+                            @if (!string.IsNullOrEmpty(item.EventTime) && TimeSpan.TryParse(item.EventTime, out TimeSpan eventTime) && eventTime != TimeSpan.Zero)
                             {
-                                <div><i class="far fa-clock"></i> @item.EventTime</div>
+                                <div><i class="far fa-clock"></i> @DateTime.Today.Add(eventTime).ToString("h:mm tt")</div>
                             }
-                            <div><i class="fas fa-map-marker-alt"></i> @item.Location</div>
+                                    <div><i class="fas fa-map-marker-alt"></i> @item.Location</div>
                         </div>
                     </div>
                     <div class="event-progress">
@@ -92,11 +92,22 @@
                             </span>
                         </div>
                     </div>
-                    <div class="event-actions">
+                    <div class="event-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <a href="@Url.Action("Details", "Events", new { id = item.EventId })"
-                           class="btn btn-primary">
-                            View Details
+                           class="btn btn-outline" style="flex: 1; min-width: 80px;">
+                            <i class="fas fa-eye"></i> View
                         </a>
+                        <a href="@Url.Action("Edit", "Events", new { id = item.EventId })"
+                           class="btn btn-secondary" style="flex: 1; min-width: 80px;">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@item.EventId" method="post" style="flex: 1; min-width: 80px;"
+                              onsubmit="return confirm('Are you sure you want to delete &quot;@Html.Raw(Html.Encode(item.EventName))&quot;?');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" style="width: 100%;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 public class CreateEventDto
 {
     public string EventName { get; set; } = string.Empty;
-    public string CategoryId { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
     public string? Description { get; set; }
     public string OwnerId { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;

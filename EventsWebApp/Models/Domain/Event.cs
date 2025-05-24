@@ -10,6 +10,8 @@ public class Event
     public string OwnerId { get; set; } = string.Empty;
     public string OwnerName { get; set; } = string.Empty;
     public string OwnerEmail { get; set; } = string.Empty;
+    public string OwnerAddress { get; set; } = string.Empty;
+    public string OwnerPhone { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
     public string? VenueName { get; set; }
     public string EventDate { get; set; } = string.Empty;
@@ -20,14 +22,20 @@ public class Event
     public List<TicketCategory> TicketCategories { get; set; } = new List<TicketCategory>();
 
    
-    public DateTime GetEventDateTime()
-    {
-        if (DateTime.TryParse($"{EventDate} {EventTime}", out DateTime result))
+   public DateTime GetEventDateTime()
+   {
+        if (DateTime.TryParse($"{EventDate} {EventTime}", out DateTime combined))
+            return combined;
+        
+        if (DateTime.TryParse(EventDate, out DateTime dateOnly))
         {
-            return result;
+            if (TimeSpan.TryParse(EventTime, out TimeSpan timeSpan))
+                return dateOnly.Add(timeSpan);
+            return dateOnly;
         }
-        return DateTime.MinValue; // Fallback for invalid dates
-    }
+    
+        return DateTime.Now;
+   }
 
     public bool HasAvailableTickets => Capacity <= 0 || TicketsSold < Capacity;
 
@@ -38,5 +46,32 @@ public class Event
             if (Capacity <= 0) return 0; // Unlimited capacity
             return Math.Round((double)TicketsSold / Capacity * 100, 1);
         }
+    }
+
+    public bool HasCompleteOwnerInformation()
+    {
+        return !string.IsNullOrWhiteSpace(OwnerName) && 
+               !string.IsNullOrWhiteSpace(OwnerEmail) && 
+               !string.IsNullOrWhiteSpace(OwnerAddress) && 
+               !string.IsNullOrWhiteSpace(OwnerPhone);
+    }
+
+    public string GetFormattedOwnerContact()
+    {
+        var contactParts = new List<string>();
+        
+        if (!string.IsNullOrWhiteSpace(OwnerName))
+            contactParts.Add($"Name: {OwnerName}");
+        
+        if (!string.IsNullOrWhiteSpace(OwnerEmail))
+            contactParts.Add($"Email: {OwnerEmail}");
+        
+        if (!string.IsNullOrWhiteSpace(OwnerPhone))
+            contactParts.Add($"Phone: {OwnerPhone}");
+        
+        if (!string.IsNullOrWhiteSpace(OwnerAddress))
+            contactParts.Add($"Address: {OwnerAddress}");
+        
+        return string.Join(" | ", contactParts);
     }
 }

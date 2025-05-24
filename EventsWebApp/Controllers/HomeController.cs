@@ -1,3 +1,4 @@
+using EventsWebApp.Models.Domain;
 using EventsWebApp.Models.ViewModels;
 using EventsWebApp.Services.Interfaces;
 using EventsWebApp.ViewModels;
@@ -22,7 +23,7 @@ public class HomeController(
         try
         {
             var events = await _eventsApiService.GetAllEventsAsync();
-            
+
             var cardViewModels = events
                 .Select(e => _mappingService.MapToEventCardViewModel(e))
                 .Where(vm => vm.IsUpcoming)
@@ -37,7 +38,7 @@ public class HomeController(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading dashboard");
-            
+
             TempData["Warning"] = "Unable to load upcoming events. Please try again later.";
             return View(new List<EventCardViewModel>());
         }
@@ -65,7 +66,7 @@ public class HomeController(
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult NotFound()
+    public IActionResult NotFoundError()
     {
         var errorViewModel = new ErrorViewModel
         {
@@ -78,7 +79,7 @@ public class HomeController(
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Unauthorized()
+    public new IActionResult Unauthorized()
     {
         var errorViewModel = new ErrorViewModel
         {
@@ -109,7 +110,7 @@ public class HomeController(
         try
         {
             var isApiHealthy = await _eventsApiService.IsApiHealthyAsync();
-            
+
             var healthStatus = new
             {
                 Status = isApiHealthy ? "Healthy" : "Degraded",
@@ -133,7 +134,7 @@ public class HomeController(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Health check failed");
-            
+
             var healthStatus = new
             {
                 Status = "Unhealthy",
@@ -160,4 +161,4 @@ public class HomeController(
             _ => "An unexpected error occurred. Please try again later."
         };
     }
-} 
+}

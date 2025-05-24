@@ -8,12 +8,12 @@ public class EventCardViewModel
     public string Description { get; set; } = string.Empty;
     public string EventCategory { get; set; } = string.Empty;
     public DateTime EventDate { get; set; }
-    public TimeSpan EventTime { get; set; }
+    public DateTime EventTime { get; set; }
     public string Location { get; set; } = string.Empty;
     public int Capacity { get; set; }
     public int TicketsSold { get; set; }
     public List<TicketCategoryViewModel> TicketCategories { get; set; } = new();
-    public DateTime FullEventDateTime => EventDate.Add(EventTime);
+    public DateTime FullEventDateTime => EventDate.Add(EventTime.TimeOfDay);
     public bool IsUpcoming => FullEventDateTime > DateTime.Now;
     public int DaysUntilEvent
     {

@@ -5,34 +5,43 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="portal-wrapper">
-    <header>
+<div class="page-header">
+    <div>
         <h1>Event Dashboard</h1>
-        <p>Welcome to your event management portal</p>
-    </header>
+        <p class="additional-info">Welcome to your event management portal</p>
+    </div>
+    <div class="action-buttons">
+        <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Event
+        </a>
+    </div>
+</div>
 
-    <main>
-        <div class="card">
-            <div class="card-header">
-                <h2>Upcoming Events</h2>
-            </div>
-            <div class="card-body">
-                @if (Model != null && Model.Any())
+<div class="card">
+    <div class="card-header">
+        <h2>Upcoming Events</h2>
+    </div>
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="event-list">
+                @foreach (var eventItem in Model)
                 {
-                    <div class="event-list">
-                        @foreach (var eventItem in Model)
-                        {
-                            <div class="event-item">
+                    <div class="event-item">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div>
                                 <h3>@eventItem.EventName</h3>
 
                                 @if (eventItem.EventDate != default(DateTime))
                                 {
-                                    <p>@eventItem.EventDate.ToString("yyyy-MM-dd")</p>
-                                }
-
-                                @if (eventItem.EventTime != default(TimeSpan))
-                                {
-                                    <span> - @eventItem.EventTime.ToString(@"hh\:mm")</span>
+                                    <p class="additional-info">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        @eventItem.EventDate.ToString("MMM dd, yyyy")
+                                        @if (eventItem.EventTime.TimeOfDay != TimeSpan.Zero)
+                                        {
+                                            <span> at @eventItem.EventTime.ToString("h:mm")</span>
+                                        }
+                                    </p>
                                 }
 
                                 @if (!string.IsNullOrEmpty(eventItem.Location))
@@ -42,34 +51,99 @@
                                     </p>
                                 }
 
-                                <a href="@Url.Action("Details", "Events", new { id = eventItem.EventId })"
-                                   class="btn btn-primary">View Details</a>
+                                @if (!string.IsNullOrEmpty(eventItem.EventCategory))
+                                {
+                                    <p class="additional-info">
+                                        <i class="fas fa-tag"></i> @eventItem.EventCategory
+                                    </p>
+                                }
+
+                                @if (eventItem.Capacity > 0)
+                                {
+                                    <p class="additional-info">
+                                        <i class="fas fa-users"></i>
+                                        @eventItem.TicketsSold / @eventItem.Capacity attendees
+                                        @if (eventItem.Capacity > 0)
+                                        {
+                                            <span style="margin-left: 0.5rem; color: var(--primary-100);">
+                                                (@(Math.Round((double)eventItem.TicketsSold / eventItem.Capacity * 100, 1))% full)
+                                            </span>
+                                        }
+                                    </p>
+                                }
+
+                                <p class="additional-info">
+                                    <i class="fas fa-clock"></i> @eventItem.RelativeTimeDescription
+                                </p>
                             </div>
-                        }
+
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="@Url.Action("Details", "Events", new { id = eventItem.EventId })"
+                                   class="btn btn-outline">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="@Url.Action("Edit", "Events", new { id = eventItem.EventId })"
+                                   class="btn btn-secondary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(eventItem.Description))
+                        {
+                            <p style="color: var(--text-muted-color); margin-top: 0.5rem;">
+                                @(eventItem.Description.Length > 150 ?
+                                                    eventItem.Description.Substring(0, 150) + "..." :
+                                                    eventItem.Description)
+                </p>
+                                }
                     </div>
                 }
-                else
-                {
-                    <p>No upcoming events found.</p>
-                    <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
-                        Create Your First Event
-                    </a>
-                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center" style="padding: 3rem;">
+                <i class="fas fa-calendar-plus" style="font-size: 3rem; color: var(--text-muted-color); margin-bottom: 1rem;"></i>
+                <h3>No upcoming events</h3>
+                <p class="text-muted">Get started by creating your first event</p>
+                <a href="@Url.Action("Create", "Events")" class="btn btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-plus"></i> Create Your First Event
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+    <div class="card">
+        <div class="card-header">
+            <h3>Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create New Event
+                </a>
+                <a href="@Url.Action("Index", "Events")" class="btn btn-outline">
+                    <i class="fas fa-list"></i> View All Events
+                </a>
+                <a href="#" class="btn btn-outline">
+                    <i class="fas fa-chart-bar"></i> View Analytics
+                </a>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <div class="card-header">
-                <h2>Quick Actions</h2>
-            </div>
-            <div class="card-body">
-                <a href="@Url.Action("Create", "Events")" class="btn btn-primary">Create New Event</a>
-                <a href="@Url.Action("Index", "Events")" class="btn">View All Events</a>
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Activity</h3>
+        </div>
+        <div class="card-body">
+            <div class="text-center" style="padding: 2rem;">
+                <i class="fas fa-clock" style="font-size: 2rem; color: var(--text-muted-color); margin-bottom: 1rem;"></i>
+                <p class="text-muted">No recent activity</p>
             </div>
         </div>
-    </main>
-
-    <footer>
-        <p class="additional-info center">&copy; @DateTime.Now.Year - Event Management System</p>
-    </footer>
+    </div>
 </div>

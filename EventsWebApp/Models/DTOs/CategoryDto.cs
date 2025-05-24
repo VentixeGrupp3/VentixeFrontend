@@ -2,14 +2,14 @@
 
 public class CategoryDto
 {
-    public string CategoryId { get; set; } = string.Empty;
-
+    public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string ColorCode { get; set; } = string.Empty;    
+    public int EventCount { get; set; }         
 
     public bool IsValid()
     {
-        return !string.IsNullOrWhiteSpace(CategoryId) && !string.IsNullOrWhiteSpace(Name);
+        return Id > 0 && !string.IsNullOrWhiteSpace(Name);
     }
 }

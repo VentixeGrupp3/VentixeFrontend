@@ -187,6 +187,10 @@ public class EventsController(
         try
         {
             var eventModel = ConvertFormViewModelToEvent(model);
+            if (TimeSpan.TryParse(model.EventTime, out var timeSpan))
+            {
+                eventModel.EventTime = timeSpan.ToString(@"hh\:mm");    
+            }
             eventModel.EventId = id; // Ensure ID matches route parameter
 
             var success = await _eventsApiService.UpdateEventAsync(id, eventModel);
@@ -272,7 +276,10 @@ public class EventsController(
             EventDate = model.EventDate,
             EventTime = model.EventTime,
             Location = model.Location,
-            VenueName = model.VenueName,
+            VenueName = !string.IsNullOrWhiteSpace(model.VenueName) 
+                ? model.VenueName 
+                : "Venue TBD",
+        
             Capacity = model.Capacity,
             OwnerId = "system", 
             OwnerName = "System User",

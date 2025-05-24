@@ -1,7 +1,7 @@
 ﻿using EventsWebApp.Services.Interfaces;
 
 namespace EventsWebApp.Services.Implementation;
-
+//Error Handling compiled by AI
 public class ErrorHandlingService(
     ILogger<ErrorHandlingService> logger,
     IConfigurationService configurationService) : IErrorHandlingService

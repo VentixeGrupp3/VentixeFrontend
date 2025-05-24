@@ -2,6 +2,7 @@
 using EventsWebApp.Middleware;
 using EventsWebApp.Services.Implementation;
 using EventsWebApp.Services.Interfaces;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Net.Http.Headers;
 
 namespace EventsWebApp.Extensions;
@@ -12,18 +13,24 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services, 
         IConfiguration configuration)
     {
-       
         services.AddConfiguration(configuration);
-        
-        
         services.AddHttpClients(configuration);
-        
-        
         services.AddBusinessServices();
-        
-        
         services.AddUtilityServices();
+        services.AddHealthCheckServices();
 
+        return services;
+    }
+
+    private static IServiceCollection AddHealthCheckServices(this IServiceCollection services)
+    {
+        services.AddHealthChecks()
+            .AddCheck("application-startup", () => 
+                HealthCheckResult.Healthy("Application has started successfully"))
+            .AddCheck<EventsApiHealthCheck>("events-api-connectivity");
+    
+        services.AddScoped<EventsApiHealthCheck>();
+    
         return services;
     }
     private static IServiceCollection AddConfiguration(

@@ -1,12 +1,13 @@
-﻿.ticket-section {
+﻿/* Ticket Styles */
+.ticket-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--border-color);
 }
 
     .ticket-section h4 {
         margin-bottom: 1rem;
-        color: var(--text-dark);
+        color: var(--headline-color);
         font-weight: 600;
     }
 
@@ -18,10 +19,10 @@
 }
 
 .ticket-card {
-    background-color: var(--background-color);
-    border-radius: 0.75rem;
+    background-color: var(--card-background-color);
+    border-radius: 1rem;
     padding: 1.25rem;
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--card-border-color);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -37,14 +38,14 @@
         margin-top: 0;
         margin-bottom: 0.5rem;
         font-weight: 600;
-        color: var(--text-dark);
+        color: var(--headline-color);
         font-size: 1.125rem;
     }
 
 .ticket-price {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--primary-100);
     margin-bottom: 0.75rem;
 }
 
@@ -58,7 +59,7 @@
 
 .ticket-availability {
     font-size: 0.875rem;
-    color: var(--text-light);
+    color: var(--text-muted-color);
     margin-bottom: 1rem;
     font-weight: 500;
 }
@@ -77,22 +78,24 @@
 }
 
     .ticket-button:disabled {
-        background-color: var(--gray-400);
-        color: var(--gray-600);
+        background-color: var(--gray-50);
+        color: var(--gray-60);
         cursor: not-allowed;
+        border-color: var(--gray-50);
     }
 
         .ticket-button:disabled:hover {
-            background-color: var(--gray-400);
+            background-color: var(--gray-50);
             transform: none;
+            border-color: var(--gray-50);
         }
 
 .ticket-info {
-    background-color: var(--background-secondary);
-    border-radius: 0.5rem;
+    background-color: var(--section-background-color);
+    border-radius: 0.75rem;
     padding: 1rem;
     margin-bottom: 1rem;
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--primary-100);
 }
 
     .ticket-info:last-child {
@@ -100,12 +103,76 @@
     }
 
     .ticket-info strong {
-        color: var(--text-dark);
+        color: var(--headline-color);
         display: block;
         margin-bottom: 0.25rem;
+        font-weight: 600;
     }
 
     .ticket-info span {
-        color: var(--text-light);
+        color: var(--text-muted-color);
         font-size: 0.875rem;
     }
+
+/* Ticket Categories in ViewModels */
+.ticket-category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+    background-color: var(--card-background-color);
+}
+
+.ticket-category-name {
+    font-weight: 600;
+    color: var(--headline-color);
+}
+
+.ticket-category-price {
+    font-weight: 700;
+    color: var(--primary-100);
+}
+
+.ticket-category-availability {
+    font-size: 0.875rem;
+    color: var(--text-muted-color);
+}
+
+/* Progress bars for ticket sales */
+.ticket-progress {
+    margin-top: 1rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--gray-30);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-100), var(--primary-90));
+    transition: width 0.3s ease;
+}
+
+.progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+    .progress-meta span:first-child {
+        color: var(--text-muted-color);
+    }
+
+.event-price {
+    font-weight: 600;
+    color: var(--primary-100);
+}

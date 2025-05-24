@@ -1,68 +1,80 @@
-﻿using EventsWebApp.Models.DTOs;
+﻿using EventsWebApp.ViewModels;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 
 namespace EventsWebApp.Models.ViewModels;
+
 public class EventFormViewModel
 {
-    public string? EventId { get; set; }
-
-    [Required(ErrorMessage = "Event name is required")]
-    [StringLength(200, ErrorMessage = "Event name cannot exceed 200 characters")]
-    [Display(Name = "Event Name")]
+    public string EventId { get; set; } = string.Empty;
     public string EventName { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Category is required")]
-    [Display(Name = "Category")]
     public string EventCategory { get; set; } = string.Empty;
-
-    [StringLength(2000, ErrorMessage = "Description cannot exceed 2000 characters")]
-    [Display(Name = "Description")]
     public string? Description { get; set; }
-
-    [Required(ErrorMessage = "Event date is required")]
-    [DataType(DataType.Date)]
-    [Display(Name = "Event Date")]
-    public string EventDate { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Event time is required")]
-    [DataType(DataType.Time)]
-    [Display(Name = "Event Time")]
-    public string EventTime { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "Location is required")]
-    [StringLength(200, ErrorMessage = "Location cannot exceed 200 characters")]
-    [Display(Name = "Location")]
+    public string OwnerName { get; set; } = string.Empty;
+    public string OwnerEmail { get; set; } = string.Empty;
+    public string OwnerAddress { get; set; } = string.Empty;
+    public string OwnerPhone { get; set; } = string.Empty;
     public string Location { get; set; } = string.Empty;
-
+    [Required(ErrorMessage = "Venue name is required")]
     [StringLength(200, ErrorMessage = "Venue name cannot exceed 200 characters")]
     [Display(Name = "Venue Name")]
-    public string? VenueName { get; set; }
-
-    [Required(ErrorMessage = "Capacity is required")]
-    [Range(1, int.MaxValue, ErrorMessage = "Capacity must be at least 1")]
-    [Display(Name = "Capacity")]
+    public string VenueName { get; set; } = string.Empty;
+    public string EventDate { get; set; } = string.Empty;
+    public string EventTime { get; set; } = string.Empty;
     public int Capacity { get; set; }
-
-    public List<TicketCategoryDto> TicketCategories { get; set; } = new();
-
-    public bool IsValidDate()
+    public int TicketsSold { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public List<TicketCategoryViewModel> TicketCategories { get; set; } = new();
+    
+    public double TicketsSoldPercentage
     {
-        return DateTime.TryParseExact(EventDate, "yyyy-MM-dd", null, DateTimeStyles.None, out _);
-    }
-
-    public bool IsValidTime()
-    {
-        return TimeSpan.TryParseExact(EventTime, @"hh\:mm", null, out _);
-    }
-
-    public DateTime? GetEventDateTime()
-    {
-        if (IsValidDate() && IsValidTime() && 
-            DateTime.TryParse($"{EventDate} {EventTime}", out DateTime result))
+        get
         {
-            return result;
+            if (Capacity <= 0) return 0; // Unlimited capacity events
+            return Math.Round((double)TicketsSold / Capacity * 100, 1);
         }
-        return null;
+    }
+    
+    public bool HasAvailableTickets => Capacity <= 0 || TicketsSold < Capacity;
+    
+    public DateTime? ParsedEventDateTime
+    {
+        get
+        {
+            if (DateTime.TryParse($"{EventDate} {EventTime}", out DateTime result))
+                return result;
+            return null;
+        }
+    }
+    
+    public bool IsUpcoming => ParsedEventDateTime.HasValue && ParsedEventDateTime > DateTime.Now;
+    
+    public string FormattedEventDateTime
+    {
+        get
+        {
+            if (ParsedEventDateTime.HasValue)
+                return ParsedEventDateTime.Value.ToString("MMM dd, yyyy 'at' h:mm tt");
+            return "Date/time not available";
+        }
+    }
+    
+    public string FormattedOwnerContact
+    {
+        get
+        {
+            var parts = new List<string>();
+            if (!string.IsNullOrWhiteSpace(OwnerEmail)) parts.Add(OwnerEmail);
+            if (!string.IsNullOrWhiteSpace(OwnerPhone)) parts.Add(OwnerPhone);
+            return string.Join(" | ", parts);
+        }
+    }
+    
+    public decimal? StartingPrice
+    {
+        get
+        {
+            if (!TicketCategories.Any()) return null;
+            return TicketCategories.Where(tc => tc.Price > 0).Min(tc => tc.Price);
+        }
     }
 }

@@ -42,6 +42,7 @@ public class TicketCategory
 
     public bool IsLimitedQuantity => AvailableQuantity > 0;
 
+
     public string GetFormattedPrice()
     {
         return Price == 0 ? "Free" : $"${Price:F2}";

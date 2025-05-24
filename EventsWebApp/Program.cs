@@ -1,5 +1,6 @@
 using EventsWebApp.Extensions;
 using EventsWebApp.Middleware;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,6 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
-    
-    // In production, you would add more sophisticated logging like:
-    // builder.Logging.AddApplicationInsights();
 
     builder.Services.AddControllersWithViews();
 
