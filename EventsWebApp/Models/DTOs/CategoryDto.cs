@@ -8,8 +8,4 @@ public class CategoryDto
     public string ColorCode { get; set; } = string.Empty;    
     public int EventCount { get; set; }         
 
-    public bool IsValid()
-    {
-        return Id > 0 && !string.IsNullOrWhiteSpace(Name);
-    }
 }

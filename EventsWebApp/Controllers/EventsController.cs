@@ -187,9 +187,20 @@ public class EventsController(
         try
         {
             var eventModel = ConvertFormViewModelToEvent(model);
-            if (TimeSpan.TryParse(model.EventTime, out var timeSpan))
+
+            _logger.LogInformation("Original EventTime from form: '{EventTime}'", model.EventTime);
+            if (!string.IsNullOrWhiteSpace(model.EventTime))
             {
-                eventModel.EventTime = timeSpan.ToString(@"hh\:mm");    
+                if (TimeSpan.TryParse(model.EventTime, out var timeSpan))
+                {
+                    eventModel.EventTime = timeSpan.ToString(@"hh\:mm");
+                    _logger.LogInformation("Converted EventTime: '{EventTime}'", eventModel.EventTime);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to parse time: '{EventTime}' ", model.EventTime);
+                    eventModel.EventTime = model.EventTime;
+                }
             }
             eventModel.EventId = id; // Ensure ID matches route parameter
 

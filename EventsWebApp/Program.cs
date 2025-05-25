@@ -1,6 +1,4 @@
 using EventsWebApp.Extensions;
-using EventsWebApp.Middleware;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 

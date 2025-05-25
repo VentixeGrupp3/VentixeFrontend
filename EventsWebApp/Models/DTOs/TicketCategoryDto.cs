@@ -14,9 +14,4 @@ public class TicketCategoryDto
                AvailableQuantity != 0 && 
                Price >= 0;
     }
-
-    public string GetApiFormattedPrice()
-    {
-        return Price.ToString("F2");
-    }
 }

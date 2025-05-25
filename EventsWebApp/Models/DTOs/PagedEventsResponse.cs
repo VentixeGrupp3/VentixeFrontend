@@ -13,15 +13,5 @@ public class PagedEventsResponse
     public bool IsEmpty => !Items.Any();
     public int ItemCount => Items.Count;
     
-    public string GetDisplayRange()
-    {
-        if (IsEmpty) return "No items";
-        
-        var startItem = (CurrentPage - 1) * PageSize + 1;
-        var endItem = Math.Min(startItem + ItemCount - 1, TotalCount);
-        
-        return $"Showing {startItem}-{endItem} of {TotalCount}";
-    }
-    
     public bool CanLoadMore => HasNext && CurrentPage < TotalPages;
 }

@@ -21,8 +21,8 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         try
         {
             // Safe date/time extraction
-            var eventDate = dto.Date != default(DateTime) ? dto.Date.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
-            var eventTime = dto.Date != default(DateTime) ? dto.Date.ToString("HH:mm") : "00:00";
+            var eventDate = dto.Date != default ? dto.Date.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
+            var eventTime = dto.Date != default ? dto.Date.ToString("HH:mm") : "00:00";
 
             return new Event
             {
@@ -158,7 +158,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 Capacity = domainModel.Capacity,
                 TicketCategories = domainModel.TicketCategories?
                     .Select(MapToTicketCategoryViewModel)
-                    .ToList() ?? new List<TicketCategoryViewModel>()
+                    .ToList() ?? []
             };
         }
         catch (Exception ex)

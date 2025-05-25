@@ -1,5 +1,4 @@
 ﻿using EventsWebApp.Services.Interfaces;
-using EventsWebApp.ViewModels;
 using System.Net;
 using System.Text.Json;
 
@@ -117,13 +116,7 @@ public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandling
             }
         }
 
-        var errorPath = statusCode switch
-        {
-            HttpStatusCode.NotFound => "/Home/NotFound",
-            HttpStatusCode.Unauthorized => "/Home/Unauthorized",
-            HttpStatusCode.Forbidden => "/Home/Forbidden",
-            _ => "/Home/Error"
-        };
+            var errorPath = $"/Home/HandleError/{(int)statusCode}";
 
         context.Response.Redirect(errorPath);
         await Task.CompletedTask;

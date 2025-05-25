@@ -50,58 +50,35 @@ public class HomeController(
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        var errorMessage = TempData["ErrorMessage"]?.ToString();
-        var statusCode = TempData["StatusCode"]?.ToString();
-
-        var errorViewModel = new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            ErrorMessage = errorMessage,
-            UserFriendlyMessage = GetUserFriendlyErrorMessage(statusCode)
-        };
-
-        return View(errorViewModel);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult NotFoundError()
+    public IActionResult HandleError(int? statusCode = null)
     {
         var errorViewModel = new ErrorViewModel
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "The page you requested could not be found."
+            ErrorMessage = TempData["ErrorMessage"]?.ToString(),
+            UserFriendlyMessage = GetUserFriendlyErrorMessage(statusCode?.ToString())
         };
 
-        Response.StatusCode = 404;
+        if (statusCode.HasValue)
+        {
+            Response.StatusCode = statusCode.Value;
+        }
+
         return View("Error", errorViewModel);
     }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public new IActionResult Unauthorized()
+    private static string GetUserFriendlyErrorMessage(string? statusCode)
     {
-        var errorViewModel = new ErrorViewModel
+        return statusCode switch
         {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "You are not authorized to access this resource."
+            "400" => "There was a problem with your request. Please check your input and try again.",
+            "401" => "You need to log in to access this resource.",
+            "403" => "You don't have permission to access this resource.",
+            "404" => "The page you're looking for could not be found.",
+            "500" => "We're experiencing technical difficulties. Please try again later.",
+            "502" => "We're having trouble connecting to our services. Please try again later.",
+            "503" => "Our services are temporarily unavailable. Please try again later.",
+            _ => "An unexpected error occurred. Please try again later."
         };
-
-        Response.StatusCode = 401;
-        return View("Error", errorViewModel);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Forbidden()
-    {
-        var errorViewModel = new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "Access to this resource is forbidden."
-        };
-
-        Response.StatusCode = 403;
-        return View("Error", errorViewModel);
     }
 
     [HttpGet]
@@ -145,20 +122,5 @@ public class HomeController(
             Response.StatusCode = 503;
             return Json(healthStatus);
         }
-    }
-
-    private static string GetUserFriendlyErrorMessage(string? statusCode)
-    {
-        return statusCode switch
-        {
-            "400" => "There was a problem with your request. Please check your input and try again.",
-            "401" => "You need to log in to access this resource.",
-            "403" => "You don't have permission to access this resource.",
-            "404" => "The page you're looking for could not be found.",
-            "500" => "We're experiencing technical difficulties. Please try again later.",
-            "502" => "We're having trouble connecting to our services. Please try again later.",
-            "503" => "Our services are temporarily unavailable. Please try again later.",
-            _ => "An unexpected error occurred. Please try again later."
-        };
     }
 }
