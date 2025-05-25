@@ -118,7 +118,6 @@ public class EventsApiService(
         {
             _logger.LogInformation("Creating new event: {EventName}", eventModel.EventName);
 
-            // Validate and convert CategoryId
             if (!int.TryParse(eventModel.CategoryId, out var categoryId))
             {
                 _logger.LogError("Invalid CategoryId '{CategoryId}' - must be a valid integer", eventModel.CategoryId);
@@ -143,7 +142,6 @@ public class EventsApiService(
                 Status = eventModel.Status
             };
 
-            // Basic validation
             if (!IsValidEventDto(createDto))
             {
                 _logger.LogWarning("Event validation failed for {EventName}", eventModel.EventName);
@@ -286,7 +284,7 @@ public class EventsApiService(
 
             var jsonContent = await response.Content.ReadAsStringAsync();
             var categoryDtos = JsonSerializer.Deserialize<List<CategoryDto>>(jsonContent, GetJsonOptions())
-                              ?? new List<CategoryDto>();
+                              ?? [];
 
             _logger.LogInformation("Successfully retrieved {Count} categories", categoryDtos.Count);
 
@@ -296,7 +294,7 @@ public class EventsApiService(
         {
             _logger.LogError(ex, "Exception occurred while fetching categories");
             await _errorHandlingService.LogErrorAsync("Error retrieving categories", ex);
-            return Enumerable.Empty<Category>();
+            return [];
         }
     }
 

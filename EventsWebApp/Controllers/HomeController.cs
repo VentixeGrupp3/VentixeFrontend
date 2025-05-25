@@ -23,17 +23,32 @@ public class HomeController(
         try
         {
             var events = await _eventsApiService.GetAllEventsAsync();
+            
+            _logger.LogInformation("Events retrieved: {Count}", events.Count());
 
             var cardViewModels = events
                 .Select(e => _mappingService.MapToEventCardViewModel(e))
+                .ToList();
+                
+            _logger.LogInformation("CardViewModels created: {Count}", cardViewModels.Count);
+
+            var upcomingEvents = cardViewModels
                 .Where(vm => vm.IsUpcoming)
                 .OrderBy(vm => vm.FullEventDateTime)
                 .Take(10)
                 .ToList();
 
-            _logger.LogInformation("Dashboard loaded with {EventCount} upcoming events", cardViewModels.Count);
+            _logger.LogInformation("Upcoming events after filter: {Count}", upcomingEvents.Count);
+            
+            if (upcomingEvents.Count == 0 && cardViewModels.Count != 0)
+            {
+                _logger.LogWarning("No upcoming events found, showing all events for debugging");
+                upcomingEvents = cardViewModels.Take(3).ToList();
+            }
 
-            return View(cardViewModels);
+            _logger.LogInformation("Dashboard loaded with {EventCount} events", upcomingEvents.Count);
+
+            return View(upcomingEvents);
         }
         catch (Exception ex)
         {
@@ -50,35 +65,58 @@ public class HomeController(
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult HandleError(int? statusCode = null)
+    public IActionResult Error()
+    {
+        var errorMessage = TempData["ErrorMessage"]?.ToString();
+        var statusCode = TempData["StatusCode"]?.ToString();
+
+        var errorViewModel = new ErrorViewModel
+        {
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            ErrorMessage = errorMessage,
+            UserFriendlyMessage = GetUserFriendlyErrorMessage(statusCode)
+        };
+
+        return View(errorViewModel);
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult NotFoundError()
     {
         var errorViewModel = new ErrorViewModel
         {
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            ErrorMessage = TempData["ErrorMessage"]?.ToString(),
-            UserFriendlyMessage = GetUserFriendlyErrorMessage(statusCode?.ToString())
+            UserFriendlyMessage = "The page you requested could not be found."
         };
 
-        if (statusCode.HasValue)
-        {
-            Response.StatusCode = statusCode.Value;
-        }
-
+        Response.StatusCode = 404;
         return View("Error", errorViewModel);
     }
-    private static string GetUserFriendlyErrorMessage(string? statusCode)
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public new IActionResult Unauthorized()
     {
-        return statusCode switch
+        var errorViewModel = new ErrorViewModel
         {
-            "400" => "There was a problem with your request. Please check your input and try again.",
-            "401" => "You need to log in to access this resource.",
-            "403" => "You don't have permission to access this resource.",
-            "404" => "The page you're looking for could not be found.",
-            "500" => "We're experiencing technical difficulties. Please try again later.",
-            "502" => "We're having trouble connecting to our services. Please try again later.",
-            "503" => "Our services are temporarily unavailable. Please try again later.",
-            _ => "An unexpected error occurred. Please try again later."
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            UserFriendlyMessage = "You are not authorized to access this resource."
         };
+
+        Response.StatusCode = 401;
+        return View("Error", errorViewModel);
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Forbidden()
+    {
+        var errorViewModel = new ErrorViewModel
+        {
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            UserFriendlyMessage = "Access to this resource is forbidden."
+        };
+
+        Response.StatusCode = 403;
+        return View("Error", errorViewModel);
     }
 
     [HttpGet]
@@ -122,5 +160,20 @@ public class HomeController(
             Response.StatusCode = 503;
             return Json(healthStatus);
         }
+    }
+
+    private static string GetUserFriendlyErrorMessage(string? statusCode)
+    {
+        return statusCode switch
+        {
+            "400" => "There was a problem with your request. Please check your input and try again.",
+            "401" => "You need to log in to access this resource.",
+            "403" => "You don't have permission to access this resource.",
+            "404" => "The page you're looking for could not be found.",
+            "500" => "We're experiencing technical difficulties. Please try again later.",
+            "502" => "We're having trouble connecting to our services. Please try again later.",
+            "503" => "Our services are temporarily unavailable. Please try again later.",
+            _ => "An unexpected error occurred. Please try again later."
+        };
     }
 }

@@ -73,7 +73,7 @@ public class EventFormViewModel
     {
         get
         {
-            if (!TicketCategories.Any()) return null;
+            if (TicketCategories.Count == 0) return null;
             return TicketCategories.Where(tc => tc.Price > 0).Min(tc => tc.Price);
         }
     }

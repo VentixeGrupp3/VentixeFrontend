@@ -13,8 +13,24 @@ public class EventCardViewModel
     public int Capacity { get; set; }
     public int TicketsSold { get; set; }
     public List<TicketCategoryViewModel> TicketCategories { get; set; } = new();
-    public DateTime FullEventDateTime => EventDate.Add(EventTime.TimeOfDay);
-    public bool IsUpcoming => FullEventDateTime > DateTime.Now;
+    
+    public DateTime FullEventDateTime 
+    { 
+        get 
+        {
+            // If EventTime has a meaningful time component, use it
+            if (EventTime.TimeOfDay != TimeSpan.Zero)
+            {
+                return EventDate.Date.Add(EventTime.TimeOfDay);
+            }
+            // Otherwise just use the EventDate
+            return EventDate;
+        }
+    }
+    
+    // Show events that haven't ended yet (with small buffer for current events)
+    public bool IsUpcoming => FullEventDateTime > DateTime.Now.AddHours(-3);
+    
     public int DaysUntilEvent
     {
         get
@@ -23,10 +39,24 @@ public class EventCardViewModel
             return Math.Max(0, (int)timeUntil.TotalDays);
         }
     }
+    
     public string RelativeTimeDescription
     {
         get
         {
+            var now = DateTime.Now;
+            var eventDateTime = FullEventDateTime;
+            
+            if (eventDateTime <= now.AddHours(-3))
+            {
+                return "Past Event";
+            }
+            
+            if (eventDateTime <= now.AddHours(3))
+            {
+                return "Happening Soon";
+            }
+            
             var daysUntil = DaysUntilEvent;
             return daysUntil switch
             {

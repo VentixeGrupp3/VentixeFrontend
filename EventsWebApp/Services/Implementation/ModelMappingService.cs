@@ -20,9 +20,11 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
-            // Safe date/time extraction
             var eventDate = dto.Date != default ? dto.Date.ToString("yyyy-MM-dd") : DateTime.Now.ToString("yyyy-MM-dd");
             var eventTime = dto.Date != default ? dto.Date.ToString("HH:mm") : "00:00";
+
+            _logger.LogInformation("Mapping Event - DTO Date: {DtoDate}, Extracted Date: {EventDate}, Extracted Time: {EventTime}", 
+                                  dto.Date, eventDate, eventTime);
 
             return new Event
             {
@@ -40,7 +42,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 Capacity = Math.Max(0, dto.Capacity),
                 TicketsSold = Math.Max(0, dto.TicketsSold),
                 Status = dto.Status ?? "Draft",
-                TicketCategories = new List<TicketCategory>()
+                TicketCategories = []
             };
         }
         catch (Exception ex)
@@ -120,7 +122,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         }
     }
 
-    private string? GetCategoryName(string categoryId)
+    private static string? GetCategoryName(string categoryId)
     {
         return categoryId switch
         {
@@ -145,6 +147,9 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
 
         try
         {
+            _logger.LogInformation("Mapping to EventFormViewModel - EventTime: '{EventTime}', EventDate: '{EventDate}'", 
+                                  domainModel.EventTime, domainModel.EventDate);
+
             return new EventFormViewModel
             {
                 EventId = domainModel.EventId,
@@ -154,7 +159,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 EventDate = domainModel.EventDate,
                 EventTime = domainModel.EventTime,
                 Location = domainModel.Location,
-                VenueName = domainModel.VenueName ?? string.Empty, // Fix for CS8601
+                VenueName = domainModel.VenueName ?? string.Empty,
                 Capacity = domainModel.Capacity,
                 TicketCategories = domainModel.TicketCategories?
                     .Select(MapToTicketCategoryViewModel)
@@ -193,7 +198,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
                 TicketsSold = domainModel.TicketsSold,
                 TicketCategories = domainModel.TicketCategories?
                     .Select(MapToTicketCategoryViewModel)
-                    .ToList() ?? new List<TicketCategoryViewModel>()
+                    .ToList() ?? []
             };
         }
         catch (Exception ex)
@@ -260,7 +265,7 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
     {
         if (events == null || !events.Any())
         {
-            return Enumerable.Empty<EventListViewModel>();
+            return [];
         }
 
         try
@@ -279,32 +284,6 @@ public class ModelMappingService(ILogger<ModelMappingService> logger) : IModelMa
         {
             _logger.LogError(ex, "Error mapping multiple Events to EventListViewModels");
             return Enumerable.Empty<EventListViewModel>();
-        }
-    }
-
-    // Private helper methods
-    private TicketCategoryDto MapToTicketCategoryDto(TicketCategory domainModel)
-    {
-        if (domainModel == null)
-        {
-            return new TicketCategoryDto();
-        }
-
-        try
-        {
-            return new TicketCategoryDto
-            {
-                TicketId = domainModel.TicketId,
-                TicketCategory = domainModel.Category,
-                Price = domainModel.Price,
-                AvailableQuantity = domainModel.AvailableQuantity,
-                Description = domainModel.Description
-            };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error mapping TicketCategory to TicketCategoryDto");
-            return new TicketCategoryDto();
         }
     }
 

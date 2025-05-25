@@ -97,3 +97,69 @@ window.SiteUtils = {
     showLoading,
     hideLoading
 };
+
+function initializeModals() {
+    document.querySelectorAll('[data-target]').forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetSelector = this.getAttribute('data-target');
+            const modal = document.querySelector(targetSelector);
+            if (modal) {
+                openModal(modal);
+            }
+        });
+    });
+
+    document.querySelectorAll('.close, [data-dismiss="modal"]').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const modal = this.closest('.modal');
+            if (modal) {
+                closeModal(modal);
+            }
+        });
+    });
+
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal(this);
+            }
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal[style*="block"]');
+            if (openModal) {
+                closeModal(openModal);
+            }
+        }
+    });
+
+    document.querySelectorAll('.modal form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submitting normally');
+        });
+    });
+}
+
+function openModal(modal) {
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(modal) {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+window.SiteUtils = {
+    fadeOutAlert,
+    validateInput,
+    scrollToElement,
+    showLoading,
+    hideLoading,
+    openModal,
+    closeModal
+};

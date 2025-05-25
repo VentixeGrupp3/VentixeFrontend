@@ -30,7 +30,7 @@ public class EventListViewModel
     {
         get
         {
-            if (!TicketCategories.Any()) return null;
+            if (TicketCategories.Count == 0) return null;
             return TicketCategories.Min(tc => tc.Price);
         }
     }

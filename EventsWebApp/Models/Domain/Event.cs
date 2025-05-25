@@ -23,19 +23,32 @@ public class Event
 
    
    public DateTime GetEventDateTime()
-   {
-        if (DateTime.TryParse($"{EventDate} {EventTime}", out DateTime combined))
-            return combined;
-        
-        if (DateTime.TryParse(EventDate, out DateTime dateOnly))
+    {
+    
+        if (!string.IsNullOrWhiteSpace(EventDate) && !string.IsNullOrWhiteSpace(EventTime))
         {
-            if (TimeSpan.TryParse(EventTime, out TimeSpan timeSpan))
-                return dateOnly.Add(timeSpan);
-            return dateOnly;
+            var combinedString = $"{EventDate} {EventTime}";
+            if (DateTime.TryParse(combinedString, out DateTime combined))
+            {
+                return combined;
+            }
         }
     
-        return DateTime.Now;
-   }
+        if (!string.IsNullOrWhiteSpace(EventDate))
+        {
+            if (DateTime.TryParse(EventDate, out DateTime dateOnly))
+            {
+                if (!string.IsNullOrWhiteSpace(EventTime) && TimeSpan.TryParse(EventTime, out TimeSpan timeSpan))
+                {
+                    return dateOnly.Add(timeSpan);
+                }
+            
+                return dateOnly.AddHours(12);
+            }
+        }
+    
+        return DateTime.Now.AddDays(1);
+    }
 
     public bool HasAvailableTickets => Capacity <= 0 || TicketsSold < Capacity;
 
