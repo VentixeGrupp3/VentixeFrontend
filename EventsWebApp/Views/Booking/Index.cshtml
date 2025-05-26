@@ -1,0 +1,75 @@
+﻿@model IEnumerable<EventsWebApp.Models.ViewModels.BookingDisplayViewModel>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="page-header">
+    <h1 class="page-title">My Bookings</h1>
+    <div class="action-buttons">
+        <a asp-controller="Events" asp-action="Index" class="btn btn-outline">
+            <i class="fas fa-calendar-alt"></i> View Events
+        </a>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="bookings-list">
+        @foreach (var booking in Model)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.5rem;">@booking.EventName</h3>
+                            <div class="additional-info">
+                                <i class="fas fa-ticket-alt"></i>
+                                @booking.Quantity x @booking.TicketType
+                            </div>
+                            <div class="additional-info">
+                                <i class="fas fa-user"></i>
+                                @booking.CustomerName
+                            </div>
+                            <div class="additional-info">
+                                <i class="fas fa-envelope"></i>
+                                @booking.CustomerEmail
+                            </div>
+                            <div class="additional-info">
+                                <i class="fas fa-phone"></i>
+                                @booking.CustomerPhone
+                            </div>
+                            <div class="additional-info">
+                                <i class="fas fa-clock"></i>
+                                Booked @booking.FormattedBookingDate
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <span class="badge badge-success" style="background-color: var(--success-color); color: white; padding: 0.5rem 1rem; border-radius: 15px; font-size: 0.875rem;">
+                                @booking.Status
+                            </span>
+                            <div style="margin-top: 1rem;">
+                                <a asp-controller="Events" asp-action="Details" asp-route-id="@booking.EventId" class="btn btn-outline">
+                                    <i class="fas fa-eye"></i> View Event
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body" style="text-align: center; padding: 3rem;">
+            <i class="fas fa-ticket-alt" style="font-size: 3rem; color: var(--text-muted-color); margin-bottom: 1rem;"></i>
+            <h3>No bookings yet</h3>
+            <p class="text-muted">You haven't made any reservations yet.</p>
+            <a asp-controller="Events" asp-action="Index" class="btn btn-primary" style="margin-top: 1rem;">
+                <i class="fas fa-calendar-alt"></i> Browse Events
+            </a>
+        </div>
+    </div>
+}

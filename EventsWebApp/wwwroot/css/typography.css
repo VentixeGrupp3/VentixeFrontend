@@ -1,0 +1,181 @@
+﻿/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--headline-color);
+    font-family: var(--font);
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+h3 {
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+h4 {
+    font-size: 24px;
+    line-height: 1.3;
+}
+
+h5 {
+    font-size: 22px;
+    line-height: 1.3;
+}
+
+h6 {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
+    color: var(--text-color);
+    margin: 0 0 1rem 0;
+}
+
+/* Text Utilities */
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.5;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.text-muted {
+    color: var(--text-muted-color);
+}
+
+.text-primary {
+    color: var(--primary-100);
+}
+
+.text-secondary {
+    color: var(--secondary-100);
+}
+
+.text-success {
+    color: var(--success-color);
+}
+
+.text-warning {
+    color: var(--warning-color);
+}
+
+.text-error {
+    color: var(--error-color);
+}
+
+.text-bold {
+    font-weight: 700;
+}
+
+.text-semibold {
+    font-weight: 600;
+}
+
+.text-medium {
+    font-weight: 500;
+}
+
+.text-normal {
+    font-weight: 400;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Specific Component Typography */
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--headline-color);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--headline-color);
+    margin: 0 0 1rem 0;
+    line-height: 1.3;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--headline-color);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: inherit;
+}
+
+    a:hover {
+        color: var(--link-hover-color);
+        text-decoration: underline;
+    }
+
+    a:focus,
+    button:focus {
+        outline: 2px solid var(--primary-100);
+        outline-offset: 2px;
+    }
+
+        a:focus:not(:focus-visible),
+        button:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+/* Utility Classes */
+.additional-info {
+    padding: 0 1rem;
+    font-size: 0.9em;
+    color: var(--text-muted-color);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+    .additional-info.center {
+        justify-content: center;
+    }
+
+    .additional-info.right {
+        justify-content: flex-end;
+    }

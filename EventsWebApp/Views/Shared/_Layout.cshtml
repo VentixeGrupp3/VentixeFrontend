@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ventixe</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="icon" href="~/favicon.ico" />
+</head>
+<body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+        // Get user info from claims
+        var currentUser = User.Identity?.Name ?? "Guest User";
+        var currentRole = User.IsInRole("Admin") ? "Admin" :
+        User.IsInRole("User") ? "User" : "Guest";
+        var isAdmin = User.IsInRole("Admin");
+        var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    }
+    <div class="wrapper">
+        <!-- Navigation Sidebar -->
+        <nav>
+            <div class="sidebar">
+                <div>
+                    <div class="nav-logo">
+                        <img src="~/images/logotype-symbol (1).svg" alt="Ventixe" width="28" height="28" />
+                        <h3 style="margin-left: 10px; color: var(--headline-color);">Ventixe</h3>
+                    </div>
+
+                    <ul class="nav-menu">
+                        <li>
+                            <a href="@Url.Action("Index", "Home")" class="nav-item @(controller == "Home" && action == "Index" ? "active" : "")">
+                                <div class="nav-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <span class="nav-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Events")" class="nav-item @(controller == "Events" ? "active" : "")">
+                                <div class="nav-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <span class="nav-text">Events</span>
+                            </a>
+                        </li>
+
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create", "Events")" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <span class="nav-text">Create Event</span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (isAuthenticated)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Booking")" class="nav-item @(controller == "Booking" ? "active" : "")">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </div>
+                                    <span class="nav-text">My Bookings</span>
+                                </a>
+                            </li>
+                        }
+
+                        <li>
+                            <a href="#" class="nav-item">
+                                <div class="nav-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="nav-text">Attendees</span>
+                            </a>
+                        </li>
+
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a href="#" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <span class="nav-text">Analytics</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-cog"></i>
+                                    </div>
+                                    <span class="nav-text">Settings</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div>
+                    <ul class="nav-menu">
+                        <li>
+                            <a href="@Url.Action("Privacy", "Home")" class="nav-item">
+                                <div class="nav-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span class="nav-text">Privacy</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-item">
+                                <div class="nav-icon">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <span class="nav-text">Help</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Breadcrumb Header -->
+            <div class="breadcrumb-header">
+                <div class="breadcrumbs">
+                    <a href="@Url.Action("Index", "Home")">Dashboard</a>
+                    @if (controller != "Home" && !string.IsNullOrEmpty(controller))
+                    {
+                        <span> / </span>
+                        <a href="@Url.Action("Index", controller)">@controller</a>
+                        @if (action != "Index" && !string.IsNullOrEmpty(action))
+                        {
+                            <span> / </span>
+                            <span>@action</span>
+                        }
+                    }
+                </div>
+
+                <div class="user-info">
+                    <span>@currentUser</span>
+                    <span class="role">@currentRole</span>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    @TempData["Success"]
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    @TempData["Error"]
+                </div>
+            }
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    @TempData["Warning"]
+                </div>
+            }
+
+            <!-- Page Content -->
+            @RenderBody()
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div>Copyright © 2025 Group3</div>
+            <div>
+                <a href="@Url.Action("Privacy", "Home")">Privacy Policy</a>
+                <a href="#">Terms and Conditions</a>
+                <a href="#">Contact</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/js/site.js" defer></script>
+    @RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
