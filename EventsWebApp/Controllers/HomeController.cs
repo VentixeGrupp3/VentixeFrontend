@@ -1,12 +1,15 @@
+// EventsWebApp/Controllers/HomeController.cs
 using EventsWebApp.Models.Domain;
 using EventsWebApp.Models.ViewModels;
 using EventsWebApp.Services.Interfaces;
 using EventsWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace EventsWebApp.Controllers;
 
+[AllowAnonymous] // Home page accessible to everyone
 public class HomeController(
     IEventsApiService eventsApiService,
     IModelMappingService mappingService,

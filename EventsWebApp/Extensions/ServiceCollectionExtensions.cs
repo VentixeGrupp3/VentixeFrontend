@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddBusinessServices();
         services.AddUtilityServices();
         services.AddHealthCheckServices();
+        services.AddHttpContextAccessor();
 
         return services;
     }
@@ -87,8 +88,10 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddBusinessServices(this IServiceCollection services)
     {
         services.AddScoped<IEventsApiService, EventsApiService>();
-        
         services.AddScoped<IModelMappingService, ModelMappingService>();
+
+        services.AddScoped<IUserRoleService, UserRoleService>();
+        services.AddScoped<IUserContextService, UserContextService>();
         
         return services;
     }
@@ -134,7 +137,9 @@ public static class ServiceCollectionExtensions
             serviceProvider.GetRequiredService<IEventsApiService>();
             serviceProvider.GetRequiredService<IModelMappingService>();
             serviceProvider.GetRequiredService<IErrorHandlingService>();
-            
+            serviceProvider.GetRequiredService<IUserRoleService>();
+            serviceProvider.GetRequiredService<IUserContextService>();
+
             var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
             httpClientFactory.CreateClient("EventsApi"); // Should not throw
             

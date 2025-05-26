@@ -1,8 +1,11 @@
-﻿using EventsWebApp.Models.ViewModels;
+﻿// EventsWebApp/Controllers/BookingController.cs
+using EventsWebApp.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventsWebApp.Controllers;
 
+[Authorize(Roles = "User,Admin")]
 public class BookingController(ILogger<BookingController> logger) : Controller
 {
     private readonly ILogger<BookingController> _logger = logger;
@@ -18,21 +21,16 @@ public class BookingController(ILogger<BookingController> logger) : Controller
         
         if (string.IsNullOrWhiteSpace(model.EventId))
             errors.Add("Event information is missing.");
-        
         if (string.IsNullOrWhiteSpace(model.CustomerName))
             errors.Add("Full name is required.");
-            
         if (string.IsNullOrWhiteSpace(model.CustomerEmail))
             errors.Add("Email is required.");
         else if (!model.CustomerEmail.Contains("@"))
             errors.Add("Please enter a valid email address.");
-            
         if (string.IsNullOrWhiteSpace(model.CustomerPhone))
             errors.Add("Phone number is required.");
-            
         if (string.IsNullOrWhiteSpace(model.TicketType))
             errors.Add("Please select a ticket type.");
-            
         if (model.Quantity < 1 || model.Quantity > 10)
             errors.Add("Quantity must be between 1 and 10.");
 
@@ -45,13 +43,9 @@ public class BookingController(ILogger<BookingController> logger) : Controller
 
         try
         {
-            // TODO: Call booking microservice here
             _logger.LogInformation("Reservation processed successfully for event {EventId}", model.EventId);
-            
-            // Store reservation data in TempData to pass to Index
             TempData["ReservationData"] = System.Text.Json.JsonSerializer.Serialize(model);
             TempData["Success"] = "Reservation submitted successfully!";
-
             return RedirectToAction("Index");
         }
         catch (Exception ex)
@@ -65,10 +59,8 @@ public class BookingController(ILogger<BookingController> logger) : Controller
     public IActionResult Index()
     {
         _logger.LogInformation("Loading booking index page");
-
         var bookings = new List<BookingDisplayViewModel>();
 
-        // Check if there's new reservation data from TempData
         if (TempData["ReservationData"] is string reservationJson)
         {
             try
@@ -96,8 +88,6 @@ public class BookingController(ILogger<BookingController> logger) : Controller
                 _logger.LogError(ex, "Error deserializing reservation data");
             }
         }
-
-        // TODO: In real implementation, fetch user's bookings from database/API
 
         return View(bookings);
     }

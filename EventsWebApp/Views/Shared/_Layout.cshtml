@@ -1,4 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using EventsWebApp.Services.Interfaces
+@{
+    var userContextService = ViewContext.HttpContext.RequestServices.GetService<IUserContextService>();
+    var currentUser = await userContextService.GetCurrentUserNameAsync();
+    var currentRole = await userContextService.GetCurrentUserRoleAsync();
+    var isAdmin = await userContextService.IsAdminAsync();
+    var isAuthenticated = await userContextService.IsAuthenticatedAsync();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -42,22 +51,31 @@
                                 <span class="nav-text">Events</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="@Url.Action("Create", "Events")" class="nav-item">
-                                <div class="nav-icon">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                                <span class="nav-text">Create Event</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <div class="nav-icon">
-                                    <i class="fas fa-ticket-alt"></i>
-                                </div>
-                                <span class="nav-text">Tickets</span>
-                            </a>
-                        </li>
+
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a href="@Url.Action("Create", "Events")" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-plus"></i>
+                                    </div>
+                                    <span class="nav-text">Create Event</span>
+                                </a>
+                            </li>
+                        }
+
+                        @if (isAuthenticated)
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Booking")" class="nav-item @(controller == "Booking" ? "active" : "")">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </div>
+                                    <span class="nav-text">My Bookings</span>
+                                </a>
+                            </li>
+                        }
+
                         <li>
                             <a href="#" class="nav-item">
                                 <div class="nav-icon">
@@ -66,22 +84,26 @@
                                 <span class="nav-text">Attendees</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <div class="nav-icon">
-                                    <i class="fas fa-chart-bar"></i>
-                                </div>
-                                <span class="nav-text">Analytics</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-item">
-                                <div class="nav-icon">
-                                    <i class="fas fa-cog"></i>
-                                </div>
-                                <span class="nav-text">Settings</span>
-                            </a>
-                        </li>
+
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a href="#" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-chart-bar"></i>
+                                    </div>
+                                    <span class="nav-text">Analytics</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-item">
+                                    <div class="nav-icon">
+                                        <i class="fas fa-cog"></i>
+                                    </div>
+                                    <span class="nav-text">Settings</span>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
 
@@ -127,8 +149,16 @@
                 </div>
 
                 <div class="user-info">
-                    <span>Orlando Laurentius</span>
-                    <span class="role">Admin</span>
+                    @if (isAuthenticated)
+                    {
+                        <span>@currentUser</span>
+                        <span class="role">@currentRole</span>
+                    }
+                    else
+                    {
+                        <span>Guest</span>
+                        <span class="role">Visitor</span>
+                    }
                 </div>
             </div>
 

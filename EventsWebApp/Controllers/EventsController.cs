@@ -1,11 +1,14 @@
-﻿using EventsWebApp.Models.Domain;
+﻿// EventsWebApp/Controllers/EventsController.cs
+using EventsWebApp.Models.Domain;
 using EventsWebApp.Models.ViewModels;
 using EventsWebApp.Services.Interfaces;
 using EventsWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventsWebApp.Controllers;
+
 public class EventsController(
     IEventsApiService eventsApiService,
     IModelMappingService mappingService,
@@ -15,28 +18,23 @@ public class EventsController(
     private readonly IModelMappingService _mappingService = mappingService;
     private readonly ILogger<EventsController> _logger = logger;
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         _logger.LogInformation("Loading events index page");
-
         try
         {
-           
             var eventsTask = _eventsApiService.GetAllEventsAsync();
             var categoriesTask = _eventsApiService.GetAllCategoriesAsync();
-
             await Task.WhenAll(eventsTask, categoriesTask);
 
             var events = await eventsTask;
             var categories = await categoriesTask;
-
             var eventViewModels = _mappingService.MapToEventListViewModels(events, categories);
-
             ViewBag.Categories = categories.ToList();
 
             _logger.LogInformation("Successfully loaded {EventCount} events and {CategoryCount} categories", 
                                   events.Count(), categories.Count());
-
             return View(eventViewModels);
         }
         catch (Exception ex)
@@ -46,6 +44,7 @@ public class EventsController(
         }
     }
 
+    [AllowAnonymous]
     public async Task<IActionResult> Details(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -55,11 +54,9 @@ public class EventsController(
         }
 
         _logger.LogInformation("Loading details for event {EventId}", id);
-
         try
         {
             var eventModel = await _eventsApiService.GetEventByIdAsync(id);
-            
             if (eventModel == null)
             {
                 _logger.LogInformation("Event {EventId} not found", id);
@@ -67,12 +64,10 @@ public class EventsController(
             }
 
             eventModel.TicketCategories = GenerateMockTickets(eventModel.CategoryId);
-
             var viewModel = _mappingService.MapToEventFormViewModel(eventModel);
 
             _logger.LogInformation("Successfully loaded details for event {EventId}: {EventName}", 
                                   id, eventModel.EventName);
-
             return View(viewModel);
         }
         catch (Exception ex)
@@ -81,10 +76,11 @@ public class EventsController(
             throw;
         }
     }
+
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         _logger.LogInformation("Loading create event form");
-
         try
         {
             await PopulateCategoriesViewBag();
@@ -99,6 +95,7 @@ public class EventsController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(EventFormViewModel model)
     {
         if (!ModelState.IsValid)
@@ -109,11 +106,9 @@ public class EventsController(
         }
 
         _logger.LogInformation("Creating new event: {EventName}", model.EventName);
-
         try
         {
             var eventModel = ConvertFormViewModelToEvent(model);
-
             var success = await _eventsApiService.CreateEventAsync(eventModel);
 
             if (success)
@@ -137,27 +132,21 @@ public class EventsController(
         }
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
-        {
             return NotFound();
-        }
 
         _logger.LogInformation("Loading edit form for event {EventId}", id);
-
         try
         {
             var eventModel = await _eventsApiService.GetEventByIdAsync(id);
-            
             if (eventModel == null)
-            {
                 return NotFound();
-            }
 
             var viewModel = _mappingService.MapToEventFormViewModel(eventModel);
             await PopulateCategoriesViewBag();
-
             return View(viewModel);
         }
         catch (Exception ex)
@@ -169,12 +158,11 @@ public class EventsController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(string id, EventFormViewModel model)
     {
         if (string.IsNullOrWhiteSpace(id))
-        {
             return NotFound();
-        }
 
         if (!ModelState.IsValid)
         {
@@ -183,29 +171,19 @@ public class EventsController(
         }
 
         _logger.LogInformation("Updating event {EventId}: {EventName}", id, model.EventName);
-
         try
         {
             var eventModel = ConvertFormViewModelToEvent(model);
-
-            _logger.LogInformation("Original EventTime from form: '{EventTime}'", model.EventTime);
             if (!string.IsNullOrWhiteSpace(model.EventTime))
             {
                 if (TimeSpan.TryParse(model.EventTime, out var timeSpan))
-                {
                     eventModel.EventTime = timeSpan.ToString(@"hh\:mm");
-                    _logger.LogInformation("Converted EventTime: '{EventTime}'", eventModel.EventTime);
-                }
                 else
-                {
-                    _logger.LogWarning("Failed to parse time: '{EventTime}' ", model.EventTime);
                     eventModel.EventTime = model.EventTime;
-                }
             }
-            eventModel.EventId = id; // Ensure ID matches route parameter
+            eventModel.EventId = id;
 
             var success = await _eventsApiService.UpdateEventAsync(id, eventModel);
-
             if (success)
             {
                 _logger.LogInformation("Successfully updated event {EventId}", id);
@@ -229,19 +207,16 @@ public class EventsController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
-        {
             return NotFound();
-        }
 
         _logger.LogInformation("Deleting event {EventId}", id);
-
         try
         {
             var success = await _eventsApiService.DeleteEventAsync(id);
-
             if (success)
             {
                 _logger.LogInformation("Successfully deleted event {EventId}", id);
@@ -252,7 +227,6 @@ public class EventsController(
                 _logger.LogWarning("Failed to delete event {EventId}", id);
                 TempData["Error"] = "Unable to delete event. Please try again.";
             }
-
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
@@ -287,12 +261,9 @@ public class EventsController(
             EventDate = model.EventDate,
             EventTime = model.EventTime,
             Location = model.Location,
-            VenueName = !string.IsNullOrWhiteSpace(model.VenueName) 
-                ? model.VenueName 
-                : "Venue TBD",
-        
+            VenueName = !string.IsNullOrWhiteSpace(model.VenueName) ? model.VenueName : "Venue TBD",
             Capacity = model.Capacity,
-            OwnerId = "system", 
+            OwnerId = "system",
             OwnerName = "System User",
             OwnerEmail = "system@eventapp.com",
             Status = "Draft",
@@ -303,7 +274,7 @@ public class EventsController(
     private List<TicketCategory> GenerateMockTickets(string categoryId)
     {
         var tickets = new List<TicketCategory>();
-            
+
         if (categoryId?.Contains("music", StringComparison.OrdinalIgnoreCase) == true)
         {
             tickets.Add(new TicketCategory 
@@ -313,7 +284,6 @@ public class EventsController(
                 AvailableQuantity = 100,
                 Description = "Standard entry to the concert"
             });
-                
             tickets.Add(new TicketCategory 
             { 
                 Category = "VIP Experience", 
@@ -331,7 +301,6 @@ public class EventsController(
                 AvailableQuantity = 250,
                 Description = "Full conference access"
             });
-                
             tickets.Add(new TicketCategory 
             { 
                 Category = "Workshop Pass", 
@@ -349,7 +318,6 @@ public class EventsController(
                 AvailableQuantity = 100,
                 Description = "General admission"
             });
-                
             tickets.Add(new TicketCategory 
             { 
                 Category = "Premium Experience", 
@@ -358,7 +326,7 @@ public class EventsController(
                 Description = "Enhanced experience with premium benefits"
             });
         }
-            
+
         tickets.Add(new TicketCategory 
         { 
             Category = "Early Bird Special", 
@@ -366,7 +334,7 @@ public class EventsController(
             AvailableQuantity = Math.Max(10, new Random().Next(5, 30)),
             Description = "Limited availability - book early and save!"
         });
-            
+
         return tickets;
     }
 }
