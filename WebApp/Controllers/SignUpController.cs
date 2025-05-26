@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using WebApp.Identity;
@@ -8,13 +9,13 @@ using WebApp.Services;
 
 namespace WebApp.Controllers;
 
-public class SignUpController(IAccountService accountService, VerificationService verificationService, UserProfileProtoService.UserProfileProtoServiceClient userProfileClient, IConfiguration configuration) : Controller
+public class SignUpController(IAccountService accountService, VerificationService verificationService, UserProfileProtoService.UserProfileProtoServiceClient userProfileClient, IConfiguration configuration, UserManager<AppUser> userManager) : Controller
 {
     private readonly IAccountService _accountService = accountService;
     private readonly VerificationService _verificationService = verificationService;
     private readonly UserProfileProtoService.UserProfileProtoServiceClient _userProfileClient = userProfileClient;
     private readonly IConfiguration _configuration = configuration;
-
+    private readonly UserManager<AppUser> _userManager = userManager;
 
 
     #region Step 1 - Set Email
@@ -120,13 +121,16 @@ public class SignUpController(IAccountService accountService, VerificationServic
         };
 
         var response = await _accountService.CreateAccountAsync(account, model.Password);
+
         if (!response.Succeeded)
         {
             TempData.Keep("Email");
             return View(model);
         }
 
-        TempData["UserId"] = _accountService.FindByEmailAsync(email).Result!.Id;
+        var user = await _accountService.FindByEmailAsync(email);
+        TempData["UserId"] = user?.Id;
+        var roleResponse = await _userManager.AddToRoleAsync(user, "User");
         return RedirectToAction("ProfileInformation");
     }
 
@@ -149,7 +153,8 @@ public class SignUpController(IAccountService accountService, VerificationServic
             return View(model);
 
         var userId = TempData["UserId"]?.ToString();
-        var request = new createUserProfileRequest() { 
+        var request = new createUserProfileRequest()
+        {
             AppUserId = userId,
             FirstName = model.FirstName,
             LastName = model.LastName,

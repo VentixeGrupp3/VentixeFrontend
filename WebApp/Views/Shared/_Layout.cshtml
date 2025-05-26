@@ -3,15 +3,23 @@
 @{
     var user = await _userManager.GetUserAsync(User);
     var userName = "App User";
+    var roles = "";
     if (user != null)
     {
         var userId = await _userManager.GetUserIdAsync(user);
         userName = await _accountService.GetUserNameAsync(userId);
-        var roles = await _userManager.GetRolesAsync(user);
+        var roleList = await _userManager.GetRolesAsync(user);
+        if (roleList.Contains("Admin"))
+        {
+            roles = "Admin";
+        }
+        else
+        {
+            roles = "User";
+        }
     }
     
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +45,7 @@
                     <div class="header-user-avatar">@userName[0]</div>
                     <div class="header-user-info">
                         <div class="header-user-name">@userName</div>
-                        <div class="header-user-role">Admin</div>
+                        <div class="header-user-role">@roles</div>
                     </div>
                 </div>
             </div>
