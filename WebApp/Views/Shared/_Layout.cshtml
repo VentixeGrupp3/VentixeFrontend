@@ -1,11 +1,15 @@
-﻿@using WebApp.Identity
-@inject IAccountService _accountService;
+﻿@inject IAccountService _accountService;
 @inject UserManager<AppUser> _userManager;
 @{
     var user = await _userManager.GetUserAsync(User);
-    var userId = user.Id;
-    var userName = await _accountService.GetUserNameAsync(userId);
-    ViewData["Title"] = "Home Page";
+    var userName = "App User";
+    if (user != null)
+    {
+        var userId = await _userManager.GetUserIdAsync(user);
+        userName = await _accountService.GetUserNameAsync(userId);
+        var roles = await _userManager.GetRolesAsync(user);
+    }
+    
 }
 
 <!DOCTYPE html>
@@ -13,7 +17,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebApp</title>
+    <title>@ViewData["Title"] - Ventixe</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -39,7 +43,7 @@
             </div>
                 <div class="header-user-dropdown">
                     <div class="header-user-dropdown-content">
-                        <a href="#" class="header-user-dropdown-item">Profile Settings</a>
+                        <a  asp-controller="UserProfile" asp-action="" class="header-user-dropdown-item">Profile Settings</a>
                         <a href="#" class="header-user-dropdown-item">Notifications</a>
                         <a href="#" class="header-user-dropdown-item">Help Center</a>
                     </div>
@@ -127,23 +131,31 @@
                     <span class="nav-text">Feedback</span>
                 </a>
             </li>
+                <li class="nav">
+
+                <div class="nav-banner">
+                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/Promotional Banner.svg" alt="Logo" />
+                </div>
+                </li>
+
+                <li class="nav-item">
+
+                    <a asp-controller="Login" asp-action="Logout">
+                        <div class="nav-item">
+                            <div class="nav-icon">
+                                <img src="https://ventixe.blob.core.windows.net/ventixe-container/logout_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Logout" />
+                            </div>
+                            <span class="nav-text">Sign Out</span>
+                        </div>
+                    </a>
+                </li>
 
         </ul>
 
 
-        <div class="nav-banner">
-            <img src="https://ventixe.blob.core.windows.net/ventixe-container/Promotional Banner.svg" alt="Logo" />
-        </div>
-
         
-        <a asp-controller="Login" asp-action="Logout">
-        <div class="nav-item">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/logout_24dp_000_FILL0_wght400_GRAD0_opsz24.svg"   alt="Logout" />
-                 </div>
-                 <span class="nav-text">Sign Out</span>
-        </div>
-      </a>
+
+           
     </nav>
   
     <main>    

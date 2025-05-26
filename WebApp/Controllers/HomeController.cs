@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
-[Authorize]
 public class HomeController : Controller
 {
 
+    [Authorize]
     public IActionResult Index()
     {
         return View();
