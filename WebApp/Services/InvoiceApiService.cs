@@ -36,7 +36,7 @@ namespace WebApp.Services
 
                 // deserialize the JSON payload
                 var invoices = await res.Content.ReadFromJsonAsync<IEnumerable<InvoiceModel>>();
-                return invoices ?? Enumerable.Empty<InvoiceModel>();
+                return invoices ?? new List<InvoiceModel>();
             }
             public async Task<InvoiceModel> PayInvoiceAsync(string userId, string invoiceId)
             {

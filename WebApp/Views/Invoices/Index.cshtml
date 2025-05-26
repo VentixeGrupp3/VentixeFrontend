@@ -1,165 +1,162 @@
 ﻿@using System.Globalization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model WebApp.ViewModels.InvoicesPageViewModel
+
 @{
     ViewData["Title"] = "Invoices";
-    var vm = Model;
+    var vm  = Model;
     var inv = vm.SelectedInvoice;
     var sek = CultureInfo.GetCultureInfo("sv-SE");
 }
 
 <div class="invoice-page">
 
-    <!-- 1) Top summary cards -->
-    <div class="summary-cards">
+  @* 1) Empty state *@
+  @if (!vm.Invoices.Any())
+  {
+      <div class="card">
+          <p>You don’t have any invoices yet.</p>
+      </div>
+  }
+  else
+  {
+      @* 2) Top summary cards *@
+      <div class="summary-cards">
         <div class="summary-card">
-            <p class="label">Total</p>
-            <h3 class="value">@vm.TotalInvoices</h3>
+          <p class="label">Total</p>
+          <h3 class="value">@vm.TotalInvoices</h3>
         </div>
         <div class="summary-card">
-            <p class="label">Paid</p>
-            <h3 class="value">@vm.PaidCount</h3>
+          <p class="label">Paid</p>
+          <h3 class="value">@vm.PaidCount</h3>
         </div>
         <div class="summary-card">
-            <p class="label">Unpaid</p>
-            <h3 class="value">@vm.UnpaidCount</h3>
+          <p class="label">Unpaid</p>
+          <h3 class="value">@vm.UnpaidCount</h3>
         </div>
-    </div>
+      </div>
 
-    <!-- 2) Two-column: list & details -->
-    <div class="invoice-content">
+      @* 3) Two-column: list & details *@
+      <div class="invoice-content">
 
-        <!-- 2a) List panel -->
+        @* 3a) List panel *@
         <aside class="invoice-list-panel">
-            <div class="list-header">
-                <input type="text" class="search-input" placeholder="Keyword Search…" />
-                <button class="btn btn-primary">Search</button>
-            </div>
-            <ul class="invoice-list">
-                @foreach (var x in vm.Invoices)
-                {
-                    <li>
-                        <a asp-action="Index"
-                           asp-route-selectedId="@x.InvoiceId"
-                           class="invoice-item @(x.InvoiceId == inv?.InvoiceId ? "active" : "")">
+          <div class="list-header">
+            <input type="text" class="search-input" placeholder="Keyword Search…" />
+            <button class="btn btn-primary">Search</button>
+          </div>
+          <ul class="invoice-list">
+            @foreach (var x in vm.Invoices)
+            {
+              <li>
+                <a asp-action="Index"
+                   asp-route-selectedId="@x.InvoiceId"
+                   class="invoice-item @(x.InvoiceId == inv?.InvoiceId ? "active" : "")">
 
-                            <div class="item-left">
-                                <!-- Event name only -->
-                                <span>@x.EventName</span>
-                            </div>
+                  <div class="item-left">
+                    <span>@x.EventName</span>
+                  </div>
+                  <div class="item-right">
+                    <span class="status @(x.InvoicePaid ? "paid" : "unpaid")">
+                      @(x.InvoicePaid ? "Paid" : "Unpaid")
+                    </span>
+                    <strong>@x.Total.ToString("C", sek)</strong>
 
-                            <div class="item-right">
-                                <span class="status @(x.InvoicePaid ? "paid" : "unpaid")">
-                                    @(x.InvoicePaid ? "Paid" : "Unpaid")
-                                </span>
-                                <strong>@x.Total.ToString("C", sek)</strong>
-
-                                @* Show Pay button only when unpaid *@
-                                @if (!x.InvoicePaid)
-                                {
-                                    <form asp-action="Pay"
-                                          asp-controller="Invoices"
-                                          asp-route-id="@x.InvoiceId"
-                                          method="post"
-                                          class="pay-form">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-secondary btn-sm">Pay</button>
-                                    </form>
-                                }
-                            </div>
-                        </a>
-                    </li>
-                }
-            </ul>
+                    @if (!x.InvoicePaid)
+                    {
+                      <form asp-action="Pay"
+                            asp-controller="Invoices"
+                            asp-route-id="@x.InvoiceId"
+                            method="post"
+                            class="pay-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-secondary btn-sm">Pay</button>
+                      </form>
+                    }
+                  </div>
+                </a>
+              </li>
+            }
+          </ul>
         </aside>
 
-        <!-- 2b) Details panel -->
+        @* 3b) Details panel *@
         @if (inv is not null)
         {
-            <section class="invoice-details-panel">
-
-                <div class="details-header">
-                    <h2># @inv.InvoiceId</h2>
-                    <span class="status @(inv.InvoicePaid ? "paid":"unpaid")">
-                        @(inv.InvoicePaid ? "Paid" : "Unpaid")
-                    </span>
+          <section class="invoice-details-panel">
+            <div class="details-header">
+              <h2># @inv.InvoiceId</h2>
+              <span class="status @(inv.InvoicePaid ? "paid" : "unpaid")">
+                @(inv.InvoicePaid ? "Paid" : "Unpaid")
+              </span>
+            </div>
+            <div class="details-body">
+              <div class="from-to">
+                <div>
+                  <h4>Bill From</h4>
+                  <p>
+                    @inv.EventOwnerName<br />
+                    @inv.EventOwnerAddress<br />
+                    @inv.EventOwnerEmail<br />
+                    @inv.EventOwnerPhone
+                  </p>
                 </div>
-
-                <div class="details-body">
-
-                    <!-- billing info -->
-                    <div class="from-to">
-                        <div>
-                            <h4>Bill From</h4>
-                            <p>
-                                @inv.EventOwnerName<br />
-                                @inv.EventOwnerAddress<br />
-                                @inv.EventOwnerEmail<br />
-                                @inv.EventOwnerPhone
-                            </p>
-                        </div>
-                        <div>
-                            <h4>Bill To</h4>
-                            <p>
-                                @inv.UserName<br />
-                                @inv.UserAddress<br />
-                                @inv.UserEmail<br />
-                                @inv.UserPhone
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- event name -->
-                    <h3>@inv.EventName</h3>
-
-                    <!-- line-items table -->
-                    <table class="ticket-details">
-                        <thead>
-                            <tr>
-                                <th>Ticket Type</th>
-                                <th>Price</th>
-                                <th>Qty</th>
-                                <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in inv.InvoiceItems)
-                            {
-                                <tr>
-                                    <td>@item.TicketCategory</td>
-                                    <td>@item.Price:C</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Amount:C</td>
-                                </tr>
-                            }
-                        </tbody>
-                        <tfoot>
-                            <tr><td colspan="3">Subtotal</td><td>@inv.Subtotal:C</td></tr>
-                            <tr><td colspan="3">Tax</td><td>@inv.Tax:C</td></tr>
-                            <tr><td colspan="3">Fee</td><td>@inv.Fee:C</td></tr>
-                            <tr class="total"><td colspan="3">Total</td><td>@inv.Total:C</td></tr>
-                        </tfoot>
-                    </table>
-
-                    @if (inv.DueDate is DateTime d)
-                    {
-                        <p class="notes">
-                            Due on @d.ToString("yyyy-MM-dd") — please pay by then to avoid penalties.
-                        </p>
-                    }
-
+                <div>
+                  <h4>Bill To</h4>
+                  <p>
+                    @inv.UserName<br />
+                    @inv.UserAddress<br />
+                    @inv.UserEmail<br />
+                    @inv.UserPhone
+                  </p>
                 </div>
+              </div>
 
-                <div class="details-footer">
-                    <a asp-action="UserDownload"
-                       asp-route-id="@inv.InvoiceId"
-                       class="btn btn-secondary">
-                        Download
-                    </a>
-                    <button class="btn btn-primary">Send Invoice</button>
-                    <button class="btn">Hold Invoice</button>
-                </div>
-            </section>
+              <h3>@inv.EventName</h3>
+              <table class="ticket-details">
+                <thead>
+                  <tr>
+                    <th>Ticket Type</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach (var item in inv.InvoiceItems)
+                  {
+                    <tr>
+                      <td>@item.TicketCategory</td>
+                      <td>@item.Price:C</td>
+                      <td>@item.Quantity</td>
+                      <td>@item.Amount:C</td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot>
+                  <tr><td colspan="3">Subtotal</td><td>@inv.Subtotal:C</td></tr>
+                  <tr><td colspan="3">Tax</td><td>@inv.Tax:C</td></tr>
+                  <tr><td colspan="3">Fee</td><td>@inv.Fee:C</td></tr>
+                  <tr class="total"><td colspan="3">Total</td><td>@inv.Total:C</td></tr>
+                </tfoot>
+              </table>
+
+              @if (inv.DueDate is DateTime d)
+              {
+                <p class="notes">
+                  Due on @d:yyyy-MM-dd — please pay by then.
+                </p>
+              }
+            </div>
+            <div class="details-footer">
+              <a asp-action="UserDownload"
+                 asp-route-id="@inv.InvoiceId"
+                 class="btn btn-secondary">Download</a>
+              <button class="btn btn-primary">Send Invoice</button>
+              <button class="btn">Hold Invoice</button>
+            </div>
+          </section>
         }
-    </div>
+      </div>
+    }
 </div>
