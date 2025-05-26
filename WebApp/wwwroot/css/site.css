@@ -900,3 +900,238 @@ form button[type="submit"] {
     #signup.card .card-body {
         padding: 0 3rem;
     }
+
+
+
+/* Viv added CSS */
+/* 4) generic card component */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* 5) table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font);
+}
+
+thead th {
+    text-align: left;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background-color: var(--primary-light);
+}
+
+tbody td {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+/* 6) status badges */
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+    .status.paid {
+        background-color: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .status.unpaid {
+        background-color: var(--yellow-light);
+        color: var(--yellow);
+    }
+
+/* 1) Summary cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: var(--card-background-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+    .summary-card .label {
+        font-size: 0.9rem;
+        color: var(--text-muted-color);
+    }
+
+    .summary-card .value {
+        font-size: 2rem;
+        color: var(--headline-color);
+        margin: 0.25rem 0;
+    }
+
+    .summary-card .meta {
+        font-size: 0.8rem;
+        color: var(--text-muted-color);
+    }
+
+/* 2) Two-column layout */
+.invoice-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem;
+}
+
+/* 2a) List panel */
+.invoice-list-panel {
+    background: var(--card-background-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.list-header {
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    flex: 1;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--input-border-color);
+    margin-right: 0.5rem;
+}
+
+.invoice-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+}
+
+.invoice-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+    .invoice-item:hover,
+    .invoice-item.active {
+        background: var(--primary-30);
+        border-radius: 0.5rem;
+    }
+
+.item-left span {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted-color);
+}
+
+.item-right {
+    text-align: right;
+}
+
+/* 2b) Details panel */
+.invoice-details-panel {
+    background: var(--card-background-color);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .details-header h2 {
+        margin: 0;
+    }
+
+.details-body {
+    padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.from-to {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+    .from-to > div {
+        width: 48%;
+    }
+
+.ticket-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+    .ticket-details th,
+    .ticket-details td {
+        padding: 0.5rem;
+        border: 1px solid var(--border-color);
+        text-align: left;
+    }
+
+    .ticket-details tfoot .total td {
+        font-weight: 600;
+    }
+
+.notes {
+    font-size: 0.9rem;
+    color: var(--text-muted-color);
+}
+
+.details-footer {
+    padding: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border-color);
+}
+
+/* shorthand grid helpers */
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+/* tighten up spacing on form-groups when inside a .compact-form */
+.compact-form .form-group {
+    margin-bottom: 0.5rem;
+}
+
+/* smaller headers to save vertical space */
+.compact-form h4 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.1rem;
+}

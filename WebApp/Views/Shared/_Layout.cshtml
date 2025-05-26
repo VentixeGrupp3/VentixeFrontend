@@ -73,22 +73,32 @@
                         <span class="nav-text">Bookings</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <div class="nav-icon">
+                        <img src="https://ventixe.blob.core.windows.net/ventixe-container/receipt_24dp_000_FILL0_wght400_GRAD0_opsz24.svg"
+                             alt="Invoices" />
+                    </div>
 
-            <li class="nav-item">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/receipt_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Invoices" />
-                </div>
-                <a asp-controller="Invoices" asp-action="Invoices">
-                    <span class="nav-text">Invoices</span>
-                </a>
-            </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="AdminInvoices" asp-action="Index">
+                            <span class="nav-text">Invoices</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Invoices" asp-action="Index">
+                            <span class="nav-text">Invoices</span>
+                        </a>
+                    }
+                </li>
 
             <li class="nav-item">
                 <div class="nav-icon">
                     <img src="https://ventixe.blob.core.windows.net/ventixe-container/mail_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Inbox" />
                 </div>
                 <a asp-controller="Inbox" asp-action="Inbox">
-                    <span class="nav-text">Invoices</span>
+                    <span class="nav-text">Inbox</span>
                 </a>
             </li>
             <li class="nav-item">

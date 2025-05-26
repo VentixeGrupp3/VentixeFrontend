@@ -40,6 +40,40 @@ builder.Services.AddGrpcClient<UserProfileProtoService.UserProfileProtoServiceCl
     var handler = new HttpClientHandler();
     return handler;
 });
+
+// Viv invoice inclusions
+builder.Services.AddHttpClient("UserClient", client =>
+{
+    client.BaseAddress = new Uri("https://ventixe-invoice-microservice-group3.azurewebsites.net/api/");
+    client.DefaultRequestHeaders.Add("x-api-key", "1a76c263-4d83-4c98-b913-9029f9dfad7d");
+});
+
+// for admins
+builder.Services.AddHttpClient("AdminClient", client =>
+{
+    client.BaseAddress = new Uri("https://ventixe-invoice-microservice-group3.azurewebsites.net/api/");
+    client.DefaultRequestHeaders.Add("x-api-key", "fba16aa0-4bb4-4bb7-9201-d81937292329");
+});
+
+builder.Services.AddScoped<InvoiceApiService.IInvoiceApiClient>(sp =>
+{
+    // grab the current user
+    var httpContext = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!;
+    // pick the right named client by role
+    var clientName = httpContext.User.IsInRole("Admin")
+        ? "AdminClient"
+        : "UserClient";
+
+    // get the HttpClientFactory and create the named client
+    var factory = sp.GetRequiredService<IHttpClientFactory>();
+    var httpClient = factory.CreateClient(clientName);
+
+    // return your concrete implementation
+    return new InvoiceApiService.InvoiceApiClient(httpClient);
+});
+
+builder.Services.AddControllersWithViews();
+
 var app = builder.Build();
 app.UseHsts();
 app.UseHttpsRedirection();
