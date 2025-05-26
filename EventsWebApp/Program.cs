@@ -7,6 +7,7 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
+    builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 
     builder.Services.AddControllersWithViews();
 

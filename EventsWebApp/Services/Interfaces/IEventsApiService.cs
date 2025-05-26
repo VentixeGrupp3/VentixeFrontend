@@ -13,4 +13,5 @@ public interface IEventsApiService
     Task<bool> DeleteEventAsync(string eventId);
     Task<IEnumerable<Category>> GetAllCategoriesAsync();
     Task<bool> IsApiHealthyAsync();
+    Task<bool> IsAdminAsync();
 }

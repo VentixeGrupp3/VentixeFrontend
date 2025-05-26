@@ -1,138 +1,216 @@
-﻿@using EventsWebApp.ViewModels
-@model IEnumerable<EventListViewModel>
+﻿@model IEnumerable<EventsWebApp.Models.ViewModels.EventCardViewModel>
+@using EventsWebApp.Services.Interfaces
 @{
     ViewData["Title"] = "Events";
+
+    // Get user role service and check permissions
+    var userRoleService = ViewContext.HttpContext.RequestServices.GetService<IUserRoleService>();
+    var isAdmin = await userRoleService.IsAdminAsync();
+    var canCreateEvents = await userRoleService.CanCreateEventsAsync();
+    var canEditEvents = await userRoleService.CanEditEventsAsync();
+    var canDeleteEvents = await userRoleService.CanDeleteEventsAsync();
 }
 
 <div class="page-header">
     <h1 class="page-title">Events</h1>
     <div class="action-buttons">
-        <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
-            <i class="fas fa-plus"></i> New Event
-        </a>
+        @if (canCreateEvents)
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Event
+            </a>
+        }
+        else
+        {
+            <span class="text-muted">
+                <i class="fas fa-info-circle"></i> Browse events and make reservations
+            </span>
+        }
     </div>
 </div>
 
-<div class="filter-actions">
-    <div class="tab-filter">
-        <a href="#" class="tab-item active" data-status="active">Active <span>(48)</span></a>
-        <a href="#" class="tab-item" data-status="draft">Draft <span>(22)</span></a>
-        <a href="#" class="tab-item" data-status="past">Past <span>(32)</span></a>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible">
+        <i class="fas fa-check-circle"></i>
+        @TempData["Success"]
+        <button type="button" class="close" onclick="this.parentElement.style.display='none';">
+            <span>&times;</span>
+        </button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible">
+        <i class="fas fa-exclamation-circle"></i>
+        @TempData["Error"]
+        <button type="button" class="close" onclick="this.parentElement.style.display='none';">
+            <span>&times;</span>
+        </button>
+    </div>
+}
+
+<!-- Events Statistics (visible to all users) -->
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@Model.Count()</h3>
+            <p>Total Events</p>
+        </div>
     </div>
 
-    <div class="search-filter">
-        <div class="search-input-container">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="Search events..." />
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
         </div>
+        <div class="stat-info">
+            <h3>@Model.Count(e => e.IsUpcoming)</h3>
+            <p>Upcoming Events</p>
+        </div>
+    </div>
 
-        <div class="filter-controls">
-            <select class="filter-dropdown">
-                <option value="">All Categories</option>
-                @if (ViewBag.Categories != null)
-                {
-                    foreach (var category in ViewBag.Categories)
-                    {
-                        <option value="@category.CategoryId">@category.Name</option>
-                    }
-                }
-            </select>
-
-            <div class="view-toggle">
-                <button class="view-toggle-btn active" data-view="grid">
-                    <i class="fas fa-th-large"></i>
-                </button>
-                <button class="view-toggle-btn" data-view="list">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <div class="stat-info">
+            <h3>@Model.Sum(e => e.TicketsSold)</h3>
+            <p>Tickets Sold</p>
         </div>
     </div>
 </div>
 
-<div id="eventsContainer" class="events-grid">
+<!-- Events List -->
+<div class="events-grid">
     @if (Model != null && Model.Any())
     {
-        foreach (var item in Model)
+        @foreach (var eventItem in Model)
         {
             <div class="event-card">
-                <div class="event-card-image">
-                    <div class="category-badge">@item.EventCategory</div>
+                <div class="event-header">
+                    <h3 class="event-title">@eventItem.EventName</h3>
+                    <span class="event-category">@eventItem.EventCategory</span>
                 </div>
-                <div class="event-card-content">
-                    <h3 class="event-card-title">@item.EventName</h3>
+
+                <div class="event-details">
+                    @if (!string.IsNullOrEmpty(eventItem.Description))
+                    {
+                        <p class="event-description">@eventItem.Description</p>
+                    }
+
                     <div class="event-meta">
-                        <div class="event-date-location">
-                            @if (!string.IsNullOrEmpty(item.EventDate) && DateTime.TryParse(item.EventDate, out DateTime eventDate))
-                            {
-                                <div><i class="far fa-calendar"></i> @eventDate.ToString("MMM dd, yyyy")</div>
-                            }
-                            @if (!string.IsNullOrEmpty(item.EventTime) && TimeSpan.TryParse(item.EventTime, out TimeSpan eventTime) && eventTime != TimeSpan.Zero)
-                            {
-                                <div><i class="far fa-clock"></i> @DateTime.Today.Add(eventTime).ToString("h:mm tt")</div>
-                            }
-                                    <div><i class="fas fa-map-marker-alt"></i> @item.Location</div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>@eventItem.EventDate.ToString("MMM dd, yyyy")</span>
+                        </div>
+
+                        @if (eventItem.EventTime.TimeOfDay != TimeSpan.Zero)
+                        {
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>@eventItem.EventTime.ToString("HH:mm")</span>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(eventItem.Location))
+                        {
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>@eventItem.Location</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="event-stats">
+                        <div class="stat-item">
+                            <strong>@eventItem.Capacity</strong>
+                            <span>Capacity</span>
+                        </div>
+
+                        <div class="stat-item">
+                            <strong>@eventItem.TicketsSold</strong>
+                            <span>Tickets Sold</span>
+                        </div>
+
+                        <div class="stat-item">
+                            <strong>@eventItem.RelativeTimeDescription</strong>
+                            <span>Status</span>
                         </div>
                     </div>
-                    <div class="event-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: @(item.TicketsSoldPercentage)%"></div>
-                        </div>
-                        <div class="progress-meta">
-                            <span>@(item.TicketsSoldPercentage)% Tickets Sold</span>
-                            <span class="event-price">
-                                @if (item.StartingPrice.HasValue)
-                                {
-                                    @($"${item.StartingPrice.Value:F2}")
-                                }
-                                else
-                                {
-                                    <text>Price TBD</text>
-                                }
-                            </span>
-                        </div>
-                    </div>
-                    <div class="event-actions" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <a href="@Url.Action("Details", "Events", new { id = item.EventId })"
-                           class="btn btn-outline" style="flex: 1; min-width: 80px;">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        <a href="@Url.Action("Edit", "Events", new { id = item.EventId })"
-                           class="btn btn-secondary" style="flex: 1; min-width: 80px;">
+                </div>
+
+                <div class="event-actions">
+                    <!-- View button - available to all users -->
+                    <a asp-action="Details" asp-route-id="@eventItem.EventId" class="btn btn-outline">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+
+                    <!-- Admin-only buttons -->
+                    @if (canEditEvents)
+                    {
+                        <a asp-action="Edit" asp-route-id="@eventItem.EventId" class="btn btn-secondary">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <form asp-action="Delete" asp-route-id="@item.EventId" method="post" style="flex: 1; min-width: 80px;"
-                              onsubmit="return confirm('Are you sure you want to delete &quot;@Html.Raw(Html.Encode(item.EventName))&quot;?');">
+                    }
+
+                    @if (canDeleteEvents)
+                    {
+                        <form asp-action="Delete" asp-route-id="@eventItem.EventId" method="post" style="display: inline;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger" style="width: 100%;">
+                            <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this event? This action cannot be undone.')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
                         </form>
-                    </div>
+                    }
                 </div>
             </div>
         }
     }
     else
     {
-        <div class="no-events-message">
-            <p>No events found. Try creating your first event!</p>
-            <a href="@Url.Action("Create", "Events")" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Create Event
-            </a>
+        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No events found</h3>
+            <p>
+                @if (canCreateEvents)
+                {
+                    <text>Get started by creating your first event.</text>
+                }
+                else
+                {
+                    <text>No events are available at the moment. Check back later!</text>
+                }
+            </p>
+
+            @if (canCreateEvents)
+            {
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+            }
         </div>
     }
 </div>
 
-<div class="pagination">
-    <span>Showing @(Model?.Count() ?? 0) events</span>
-    <div class="pagination-controls">
-        <a href="#" class="page-btn prev"><i class="fas fa-chevron-left"></i></a>
-        <a href="#" class="page-num active">1</a>
-        <a href="#" class="page-num">2</a>
-        <a href="#" class="page-num">3</a>
-        <span class="page-ellipsis">...</span>
-        <a href="#" class="page-num">8</a>
-        <a href="#" class="page-btn next"><i class="fas fa-chevron-right"></i></a>
+<!-- User Role Information (for debugging - remove in production) -->
+@if (isAdmin)
+{
+    <div class="debug-info" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 0.5rem; border-left: 4px solid #28a745;">
+        <small>
+            <strong>Admin Mode:</strong> You have full access to create, edit, and delete events.
+        </small>
     </div>
-</div>
+}
+else
+{
+    <div class="debug-info" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 0.5rem; border-left: 4px solid #17a2b8;">
+        <small>
+            <strong>User Mode:</strong> You can view events and make reservations.
+        </small>
+    </div>
+}
