@@ -1,13 +1,4 @@
-﻿@using EventsWebApp.Services.Interfaces
-@{
-    var userContextService = ViewContext.HttpContext.RequestServices.GetService<IUserContextService>();
-    var currentUser = await userContextService.GetCurrentUserNameAsync();
-    var currentRole = await userContextService.GetCurrentUserRoleAsync();
-    var isAdmin = await userContextService.IsAdminAsync();
-    var isAuthenticated = await userContextService.IsAuthenticatedAsync();
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -23,6 +14,13 @@
     @{
         var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
         var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+        // Get user info from claims
+        var currentUser = User.Identity?.Name ?? "Guest User";
+        var currentRole = User.IsInRole("Admin") ? "Admin" :
+        User.IsInRole("User") ? "User" : "Guest";
+        var isAdmin = User.IsInRole("Admin");
+        var isAuthenticated = User.Identity?.IsAuthenticated == true;
     }
     <div class="wrapper">
         <!-- Navigation Sidebar -->
@@ -149,16 +147,8 @@
                 </div>
 
                 <div class="user-info">
-                    @if (isAuthenticated)
-                    {
-                        <span>@currentUser</span>
-                        <span class="role">@currentRole</span>
-                    }
-                    else
-                    {
-                        <span>Guest</span>
-                        <span class="role">Visitor</span>
-                    }
+                    <span>@currentUser</span>
+                    <span class="role">@currentRole</span>
                 </div>
             </div>
 
@@ -201,6 +191,6 @@
     </div>
 
     <script src="~/js/site.js" defer></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,5 +1,4 @@
-﻿// EventsWebApp/Controllers/EventsController.cs
-using EventsWebApp.Models.Domain;
+﻿using EventsWebApp.Models.Domain;
 using EventsWebApp.Models.ViewModels;
 using EventsWebApp.Services.Interfaces;
 using EventsWebApp.ViewModels;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EventsWebApp.Controllers;
 
+[Authorize] // All actions require authentication
 public class EventsController(
     IEventsApiService eventsApiService,
     IModelMappingService mappingService,
@@ -24,13 +24,10 @@ public class EventsController(
         _logger.LogInformation("Loading events index page");
         try
         {
-            var eventsTask = _eventsApiService.GetAllEventsAsync();
-            var categoriesTask = _eventsApiService.GetAllCategoriesAsync();
-            await Task.WhenAll(eventsTask, categoriesTask);
-
-            var events = await eventsTask;
-            var categories = await categoriesTask;
-            var eventViewModels = _mappingService.MapToEventListViewModels(events, categories);
+            var events = await _eventsApiService.GetAllEventsAsync();
+            var categories = await _eventsApiService.GetAllCategoriesAsync();
+            
+            var eventViewModels = events.Select(e => _mappingService.MapToEventCardViewModel(e)).ToList();
             ViewBag.Categories = categories.ToList();
 
             _logger.LogInformation("Successfully loaded {EventCount} events and {CategoryCount} categories", 

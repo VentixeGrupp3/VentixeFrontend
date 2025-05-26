@@ -18,12 +18,10 @@ public class EventCardViewModel
     { 
         get 
         {
-            // If EventTime has a meaningful time component, use it
             if (EventTime.TimeOfDay != TimeSpan.Zero)
             {
                 return EventDate.Date.Add(EventTime.TimeOfDay);
             }
-            // Otherwise just use the EventDate
             return EventDate;
         }
     }

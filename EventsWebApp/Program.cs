@@ -1,3 +1,4 @@
+using EventsWebApp.Authentication;
 using EventsWebApp.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,15 +8,26 @@ try
     builder.Logging.ClearProviders();
     builder.Logging.AddConsole();
     builder.Logging.AddDebug();
-    builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+
+    builder.Services.AddAuthentication(ApiKeyAuthenticationSchemeOptions.DefaultScheme)
+        .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+            ApiKeyAuthenticationSchemeOptions.DefaultScheme, 
+            options => { });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+        options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
+    });
 
     builder.Services.AddControllersWithViews();
-
     builder.Services.AddApplicationServices(builder.Configuration);
-
     builder.Services.ValidateServiceRegistration();
 
     var app = builder.Build();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.UseApplicationMiddleware(app.Environment);
 

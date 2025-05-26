@@ -1,11 +1,10 @@
-﻿// EventsWebApp/Controllers/BookingController.cs
-using EventsWebApp.Models.ViewModels;
+﻿using EventsWebApp.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventsWebApp.Controllers;
 
-[Authorize(Roles = "User,Admin")]
+[Authorize(Roles = "User,Admin")] // Users and Admins can make bookings
 public class BookingController(ILogger<BookingController> logger) : Controller
 {
     private readonly ILogger<BookingController> _logger = logger;
@@ -58,7 +57,9 @@ public class BookingController(ILogger<BookingController> logger) : Controller
 
     public IActionResult Index()
     {
-        _logger.LogInformation("Loading booking index page");
+        _logger.LogInformation("Loading booking index page for user {UserName}", 
+            User.Identity?.Name ?? "Unknown");
+        
         var bookings = new List<BookingDisplayViewModel>();
 
         if (TempData["ReservationData"] is string reservationJson)

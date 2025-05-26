@@ -1,11 +1,11 @@
 ﻿@using EventsWebApp.Models.ViewModels
 @using EventsWebApp.Services.Interfaces
 @model EventFormViewModel
+
+@inject IUserRoleService userRoleService
+
 @{
     ViewData["Title"] = "Event Details";
-
-    // Get user role service and check permissions
-    var userRoleService = ViewContext.HttpContext.RequestServices.GetService<IUserRoleService>();
     var isAdmin = await userRoleService.IsAdminAsync();
     var canEditEvents = await userRoleService.CanEditEventsAsync();
     var canDeleteEvents = await userRoleService.CanDeleteEventsAsync();
@@ -42,27 +42,22 @@
         {
             <p><strong>Category:</strong> @Model.EventCategory</p>
         }
-
         @if (!string.IsNullOrEmpty(Model?.Description))
         {
             <p><strong>Description:</strong> @Model.Description</p>
         }
-
         @if (!string.IsNullOrEmpty(Model?.EventDate))
         {
             <p><strong>Date:</strong> @Model.EventDate</p>
         }
-
         @if (!string.IsNullOrEmpty(Model?.EventTime))
         {
             <p><strong>Time:</strong> @Model.EventTime</p>
         }
-
         @if (!string.IsNullOrEmpty(Model?.Location))
         {
             <p><strong>Location:</strong> @Model.Location</p>
         }
-
         @if (!string.IsNullOrEmpty(Model?.VenueName))
         {
             <p><strong>Venue:</strong> @Model.VenueName</p>
@@ -70,7 +65,7 @@
 
         <p><strong>Capacity:</strong> @(Model?.Capacity ?? 0)</p>
 
-        @if (Model != null && Model.TicketsSold > 0)
+        @if (Model?.TicketsSold > 0)
         {
             <p><strong>Tickets Sold:</strong> @Model.TicketsSold (@Model.TicketsSoldPercentage% of capacity)</p>
         }
@@ -78,13 +73,12 @@
 </div>
 
 <!-- Action Buttons -->
-<div class="mt-3" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-    <!-- Reserve Tickets Button - Available to ALL users -->
+<div class="mt-3 d-flex flex-wrap gap-2">
+    <!-- Reserve Tickets -->
     <a href="#reserveForm" class="btn btn-primary btn-lg" onclick="document.getElementById('reserveForm').style.display='block';">
         <i class="fas fa-ticket-alt"></i> Reserve Tickets
     </a>
 
-    <!-- Admin-only buttons -->
     @if (canEditEvents)
     {
         <a asp-action="Edit" asp-route-id="@Model?.EventId" class="btn btn-secondary">
@@ -103,99 +97,82 @@
         </form>
     }
 
-    <!-- Back button - Available to all users -->
     <a asp-action="Index" class="btn btn-outline">
         <i class="fas fa-arrow-left"></i> Back to Events
     </a>
 </div>
 
-<!-- Permission Info (shows what user can/cannot do) -->
 @if (!isAdmin)
 {
-    <div class="alert alert-info" style="margin-top: 1rem;">
+    <div class="alert alert-info mt-4">
         <i class="fas fa-info-circle"></i>
         <strong>Viewing as regular user:</strong> You can view event details and make reservations.
         Contact an administrator to modify event details.
     </div>
 }
 
-<!-- Reservation Form - Available to ALL users -->
+<!-- Reservation Form -->
 <div id="reserveForm" style="display: none; margin-top: 2rem;">
     <div class="card">
         <div class="card-header">
             <h3>Reserve Tickets - @Model?.EventName</h3>
-            <div class="additional-info">
+            <div>
                 <i class="fas fa-calendar"></i> @Model?.EventDate
                 @if (!string.IsNullOrEmpty(Model?.EventTime))
                 {
-                    <span>at @Model.EventTime</span>
+                    <span> at @Model.EventTime</span>
                 }
             </div>
-            <div class="additional-info">
+            <div>
                 <i class="fas fa-map-marker-alt"></i> @Model?.Location
                 @if (!string.IsNullOrEmpty(Model?.VenueName))
                 {
-                    <span>- @Model.VenueName</span>
+                    <span> - @Model.VenueName</span>
                 }
             </div>
         </div>
 
         <div class="card-body">
-            <!-- FORM SUBMITS TO BOOKINGS SERVICE -->
-            <form asp-controller="Booking" asp-action="CreateReservation" method="post" class="event-form">
+            <form asp-controller="Booking" asp-action="Reserve" method="post" class="event-form">
                 @Html.AntiForgeryToken()
 
-                <!-- Event Data (matches proto structure) -->
                 <input type="hidden" name="EventId" value="@Model?.EventId" />
                 <input type="hidden" name="EventName" value="@Model?.EventName" />
-                <input type="hidden" name="EventCategory" value="@Model?.EventCategory" />
-                <input type="hidden" name="EventDate" value="@Model?.EventDate" />
-                <input type="hidden" name="EventTime" value="@Model?.EventTime" />
-                <input type="hidden" name="EventLocation" value="@Model?.Location" />
-                <input type="hidden" name="VenueName" value="@Model?.VenueName" />
-
-                <!-- Owner Data (if needed by booking service) -->
-                <input type="hidden" name="EventOwnerName" value="@Model?.OwnerName" />
-                <input type="hidden" name="EventOwnerEmail" value="@Model?.OwnerEmail" />
-                <input type="hidden" name="EventOwnerAddress" value="@Model?.OwnerAddress" />
-                <input type="hidden" name="EventOwnerPhone" value="@Model?.OwnerPhone" />
 
                 <div class="form-section">
-                    <h4 class="section-title">Customer Information</h4>
-
+                    <h4>Customer Information</h4>
                     <div class="form-group">
-                        <label class="form-label">Full Name *</label>
-                        <input type="text" name="CustomerName" class="form-control" placeholder="Enter your full name" required />
+                        <label>Full Name *</label>
+                        <input type="text" name="CustomerName" class="form-control" required />
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label class="form-label">Email *</label>
-                            <input type="email" name="CustomerEmail" class="form-control" placeholder="your.email@example.com" required />
+                            <label>Email *</label>
+                            <input type="email" name="CustomerEmail" class="form-control" required />
                         </div>
-
                         <div class="form-group col-md-6">
-                            <label class="form-label">Phone *</label>
-                            <input type="tel" name="CustomerPhone" class="form-control" placeholder="+46 123 456 789" required />
+                            <label>Phone *</label>
+                            <input type="tel" name="CustomerPhone" class="form-control" required />
                         </div>
                     </div>
                 </div>
 
                 <div class="form-section">
-                    <h4 class="section-title">Ticket Selection</h4>
-
+                    <h4>Ticket Selection</h4>
                     <div class="form-row">
                         <div class="form-group col-md-8">
-                            <label class="form-label">Ticket Type *</label>
-                            <select name="SelectedTicketCategory" class="form-control" required onchange="updateTicketPrice(this)">
+                            <label>Ticket Type *</label>
+                            <select name="TicketType" class="form-control" required onchange="updateTicketPrice(this)">
                                 <option value="">-- Select Ticket Type --</option>
                                 @if (Model?.TicketCategories != null && Model.TicketCategories.Any())
                                 {
-                                    @foreach (var ticket in Model.TicketCategories)
+                                    foreach (var ticket in Model.TicketCategories)
                                     {
                                         <option value="@ticket.TicketCategory"
                                                 data-price="@ticket.Price"
-                                                data-available="@ticket.AvailableQuantity">
+                                                data-available="@ticket.AvailableQuantity"
+                                                data-description="@ticket.Description">
                                             @ticket.TicketCategory - @ticket.FormattedPrice
                                             @if (ticket.AvailableQuantity <= 0)
                                             {
@@ -210,36 +187,30 @@
                                 }
                                 else
                                 {
-                                    <!-- Fallback if no tickets are loaded -->
-                                    <option value="Standard" data-price="29.99">Standard - $29.99</option>
-                                    <option value="VIP" data-price="79.99">VIP - $79.99</option>
-                                    <option value="Premium" data-price="149.99">Premium - $149.99</option>
+                                    <option value="Standard" data-price="29.99" data-description="General admission">Standard - $29.99</option>
+                                    <option value="VIP" data-price="79.99" data-description="Premium experience">VIP - $79.99</option>
+                                    <option value="Premium" data-price="149.99" data-description="Exclusive access">Premium - $149.99</option>
                                 }
                             </select>
-                            <!-- Hidden field for ticket price -->
-                            <input type="hidden" name="SelectedTicketPrice" id="ticketPrice" />
+                            <input type="hidden" name="TicketPrice" id="ticketPrice" />
                         </div>
 
                         <div class="form-group col-md-4">
-                            <label class="form-label">Quantity *</label>
-                            <input type="number" name="TicketQuantity" id="ticketQuantity" value="1" min="1" max="10" class="form-control" required onchange="updateTotal()" />
+                            <label>Quantity *</label>
+                            <input type="number" name="Quantity" id="ticketQuantity" value="1" min="1" max="10" class="form-control" required onchange="updateTotal()" />
                         </div>
                     </div>
 
-                    <!-- Ticket Description -->
-                    <div id="ticketDescription" style="display: none; margin-top: 1rem; padding: 1rem; background-color: var(--section-background-color); border-radius: 0.5rem;">
-                        <p id="descriptionText" style="margin: 0; color: var(--text-muted-color); font-size: 0.875rem;"></p>
+                    <div id="ticketDescription" style="display: none;" class="mt-2 p-2 bg-light rounded">
+                        <p id="descriptionText" class="mb-0 text-muted small"></p>
                     </div>
 
-                    <!-- Total Price Display -->
-                    <div id="totalDisplay" style="display: none; margin-top: 1rem; padding: 1rem; background-color: var(--primary-30); border-radius: 0.5rem; text-align: center;">
-                        <strong style="font-size: 1.25rem; color: var(--primary-100);">
-                            Total: $<span id="totalAmount">0.00</span>
-                        </strong>
+                    <div id="totalDisplay" style="display: none;" class="mt-3 p-3 text-center bg-info text-white rounded">
+                        <strong>Total: $<span id="totalAmount">0.00</span></strong>
                     </div>
                 </div>
 
-                <div class="form-actions">
+                <div class="form-actions mt-4">
                     <button type="submit" class="btn btn-primary btn-lg">
                         <i class="fas fa-ticket-alt"></i> Reserve Tickets
                     </button>
@@ -252,81 +223,6 @@
     </div>
 </div>
 
-<script>
-    // Enhanced ticket selection functionality
-    function updateTicketPrice(selectElement) {
-        const selectedOption = selectElement.options[selectElement.selectedIndex];
-        const priceField = document.querySelector('#ticketPrice');
-        const descriptionDiv = document.querySelector('#ticketDescription');
-        const descriptionText = document.querySelector('#descriptionText');
-        const quantityInput = document.querySelector('#ticketQuantity');
-
-        if (selectedOption.value && priceField) {
-            const price = selectedOption.getAttribute('data-price') || '0';
-            const available = parseInt(selectedOption.getAttribute('data-available')) || 0;
-
-            priceField.value = price;
-
-            // Update quantity max based on availability
-            if (available > 0 && available < 10) {
-                quantityInput.max = available;
-                if (parseInt(quantityInput.value) > available) {
-                    quantityInput.value = available;
-                }
-            } else {
-                quantityInput.max = 10;
-            }
-
-            // Show description if available
-            @if (Model?.TicketCategories != null)
-            {
-                    @foreach (var ticket in Model.TicketCategories)
-                    {
-                            <text>
-                            if (selectedOption.value === '@ticket.TicketCategory' && '@ticket.Description') 
-                            {
-                                descriptionText.textContent = '@ticket.Description',
-                                descriptionDiv.style.display = 'block',
-                            } 
-                            else if (selectedOption.value === '@ticket.TicketCategory') 
-                            {
-                                descriptionDiv.style.display = 'none'
-                            }
-                            </text>
-                    }
-            }
-
-            updateTotal();
-        } else {
-            descriptionDiv.style.display = 'none';
-            document.querySelector('#totalDisplay').style.display = 'none';
-        }
-    }
-
-    function updateTotal() {
-        const priceField = document.querySelector('#ticketPrice');
-        const quantityInput = document.querySelector('#ticketQuantity');
-        const totalDisplay = document.querySelector('#totalDisplay');
-        const totalAmount = document.querySelector('#totalAmount');
-
-        if (priceField && quantityInput && priceField.value && quantityInput.value) {
-            const price = parseFloat(priceField.value) || 0;
-            const quantity = parseInt(quantityInput.value) || 0;
-            const total = price * quantity;
-
-            totalAmount.textContent = total.toFixed(2);
-            totalDisplay.style.display = 'block';
-        } else {
-            totalDisplay.style.display = 'none';
-        }
-    }
-
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const quantityInput = document.querySelector('#ticketQuantity');
-        if (quantityInput) {
-            quantityInput.addEventListener('change', updateTotal);
-            quantityInput.addEventListener('input', updateTotal);
-        }
-    });
-</script>
+@section Scripts {
+    <script src="~/js/event-details.js"></script>
+}

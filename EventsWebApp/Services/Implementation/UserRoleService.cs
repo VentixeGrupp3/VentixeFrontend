@@ -1,4 +1,5 @@
 ﻿using EventsWebApp.Services.Interfaces;
+using System.Security.Claims;
 
 public interface IUserRoleService
 {
@@ -9,29 +10,48 @@ public interface IUserRoleService
     Task<bool> CanDeleteEventsAsync();
 }
 
-public class UserRoleService(IEventsApiService eventsApiService, ILogger<UserRoleService> logger) : IUserRoleService
+public class UserRoleService(
+    IHttpContextAccessor httpContextAccessor,
+    ILogger<UserRoleService> logger) : IUserRoleService
 {
-    private readonly IEventsApiService _eventsApiService = eventsApiService;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILogger<UserRoleService> _logger = logger;
 
     public async Task<string> GetCurrentUserRoleAsync()
     {
+        await Task.CompletedTask;
+        
         try
         {
-            var canAccessAdmin = await _eventsApiService.IsAdminAsync();
-            return canAccessAdmin ? "Admin" : "User";
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user?.Identity?.IsAuthenticated == true)
+            {
+                var role = user.FindFirst(ClaimTypes.Role)?.Value;
+                return !string.IsNullOrEmpty(role) ? role : "User";
+            }
+            return "Guest";
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error checking user role");
-            return "User"; // Default to user if can't determine
+            return "Guest";
         }
     }
 
     public async Task<bool> IsAdminAsync()
     {
-        var role = await GetCurrentUserRoleAsync();
-        return role == "Admin";
+        await Task.CompletedTask;
+        
+        try
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            return user?.IsInRole("Admin") == true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking admin status");
+            return false;
+        }
     }
 
     public async Task<bool> CanCreateEventsAsync()

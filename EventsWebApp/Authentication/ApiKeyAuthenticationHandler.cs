@@ -1,67 +1,83 @@
-﻿using EventsWebApp.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
 namespace EventsWebApp.Authentication;
 
-public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthenticationSchemeOptions>
+public class ApiKeyAuthenticationSchemeOptions : AuthenticationSchemeOptions
 {
-    private readonly IEventsApiService _eventsApiService;
-    private readonly ILogger<ApiKeyAuthenticationHandler> _logger;
+    public const string DefaultScheme = "ApiKey";
+}
 
-    public ApiKeyAuthenticationHandler(
-        IOptionsMonitor<ApiKeyAuthenticationSchemeOptions> options,
-        ILoggerFactory logger,
-        UrlEncoder encoder,
-        ISystemClock clock,
-        IEventsApiService eventsApiService)
-        : base(options, logger, encoder, clock)
-    {
-        _eventsApiService = eventsApiService;
-        _logger = logger.CreateLogger<ApiKeyAuthenticationHandler>();
-    }
+public class ApiKeyAuthenticationHandler(
+    IOptionsMonitor<ApiKeyAuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder,
+    IConfiguration configuration) : AuthenticationHandler<ApiKeyAuthenticationSchemeOptions>(options, logger, encoder)
+{
+    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<ApiKeyAuthenticationHandler> _logger = logger.CreateLogger<ApiKeyAuthenticationHandler>();
 
-    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         try
         {
-            // Check if user has admin access via API key
-            var isAdmin = await _eventsApiService.IsAdminAsync();
-            
-            var claims = new List<Claim>
+            // Get API key from header
+            if (!Request.Headers.TryGetValue("x-api-key", out var apiKeyHeaderValues))
             {
-                new(ClaimTypes.Name, isAdmin ? "Event Administrator" : "Event User"),
-                new(ClaimTypes.Role, isAdmin ? "Admin" : "User"),
-                new("ApiKeyAccess", "true")
+                // No API key provided - allow anonymous access
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
+
+            var providedApiKey = apiKeyHeaderValues.FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(providedApiKey))
+            {
+                return Task.FromResult(AuthenticateResult.NoResult());
+            }
+
+            var adminApiKey = _configuration["Services:EventsApi:AdminApiKey"];
+            var userApiKey = _configuration["Services:EventsApi:UserApiKey"];
+
+            string role;
+            string userName;
+
+            // Determine role based on which key was provided
+            if (!string.IsNullOrEmpty(adminApiKey) && providedApiKey == adminApiKey)
+            {
+                role = "Admin";
+                userName = "Admin User";
+                _logger.LogInformation("Admin authenticated with API key");
+            }
+            else if (!string.IsNullOrEmpty(userApiKey) && providedApiKey == userApiKey)
+            {
+                role = "User";
+                userName = "Standard User";
+                _logger.LogInformation("User authenticated with API key");
+            }
+            else
+            {
+                _logger.LogWarning("Invalid API key provided: {ApiKey}", providedApiKey?.Substring(0, Math.Min(8, providedApiKey.Length)) + "...");
+                return Task.FromResult(AuthenticateResult.Fail("Invalid API key"));
+            }
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, role),
+                new Claim("ApiKey", providedApiKey)
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
-            _logger.LogDebug("Authentication successful. Role: {Role}", isAdmin ? "Admin" : "User");
-            
-            return AuthenticateResult.Success(ticket);
+            return Task.FromResult(AuthenticateResult.Success(ticket));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Authentication failed");
-            
-            // Create a guest user for failed API key authentication
-            var guestClaims = new List<Claim>
-            {
-                new(ClaimTypes.Name, "Guest User"),
-                new(ClaimTypes.Role, "Guest"),
-                new("ApiKeyAccess", "false")
-            };
-
-            var guestIdentity = new ClaimsIdentity(guestClaims, Scheme.Name);
-            var guestPrincipal = new ClaimsPrincipal(guestIdentity);
-            var guestTicket = new AuthenticationTicket(guestPrincipal, Scheme.Name);
-
-            return AuthenticateResult.Success(guestTicket);
+            _logger.LogError(ex, "Error during API key authentication");
+            return Task.FromResult(AuthenticateResult.Fail("Authentication error"));
         }
     }
 }

@@ -1,4 +1,3 @@
-// EventsWebApp/Controllers/HomeController.cs
 using EventsWebApp.Models.Domain;
 using EventsWebApp.Models.ViewModels;
 using EventsWebApp.Services.Interfaces;
@@ -9,7 +8,6 @@ using System.Diagnostics;
 
 namespace EventsWebApp.Controllers;
 
-[AllowAnonymous] // Home page accessible to everyone
 public class HomeController(
     IEventsApiService eventsApiService,
     IModelMappingService mappingService,
@@ -19,53 +17,42 @@ public class HomeController(
     private readonly IModelMappingService _mappingService = mappingService;
     private readonly ILogger<HomeController> _logger = logger;
 
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        _logger.LogInformation("Loading dashboard page");
+        _logger.LogInformation("Loading dashboard page for user {UserName}", 
+            User.Identity?.Name ?? "Anonymous");
 
         try
         {
             var events = await _eventsApiService.GetAllEventsAsync();
-            
-            _logger.LogInformation("Events retrieved: {Count}", events.Count());
-
             var cardViewModels = events
                 .Select(e => _mappingService.MapToEventCardViewModel(e))
                 .ToList();
-                
-            _logger.LogInformation("CardViewModels created: {Count}", cardViewModels.Count);
 
             var upcomingEvents = cardViewModels
                 .Where(vm => vm.IsUpcoming)
                 .OrderBy(vm => vm.FullEventDateTime)
                 .Take(10)
                 .ToList();
-
-            _logger.LogInformation("Upcoming events after filter: {Count}", upcomingEvents.Count);
             
             if (upcomingEvents.Count == 0 && cardViewModels.Count != 0)
             {
-                _logger.LogWarning("No upcoming events found, showing all events for debugging");
                 upcomingEvents = cardViewModels.Take(3).ToList();
             }
-
-            _logger.LogInformation("Dashboard loaded with {EventCount} events", upcomingEvents.Count);
 
             return View(upcomingEvents);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error loading dashboard");
-
             TempData["Warning"] = "Unable to load upcoming events. Please try again later.";
             return View(new List<EventCardViewModel>());
         }
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+    [AllowAnonymous]
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
@@ -83,88 +70,6 @@ public class HomeController(
         return View(errorViewModel);
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult NotFoundError()
-    {
-        var errorViewModel = new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "The page you requested could not be found."
-        };
-
-        Response.StatusCode = 404;
-        return View("Error", errorViewModel);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public new IActionResult Unauthorized()
-    {
-        var errorViewModel = new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "You are not authorized to access this resource."
-        };
-
-        Response.StatusCode = 401;
-        return View("Error", errorViewModel);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Forbidden()
-    {
-        var errorViewModel = new ErrorViewModel
-        {
-            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
-            UserFriendlyMessage = "Access to this resource is forbidden."
-        };
-
-        Response.StatusCode = 403;
-        return View("Error", errorViewModel);
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> Health()
-    {
-        try
-        {
-            var isApiHealthy = await _eventsApiService.IsApiHealthyAsync();
-
-            var healthStatus = new
-            {
-                Status = isApiHealthy ? "Healthy" : "Degraded",
-                Timestamp = DateTime.UtcNow,
-                Dependencies = new
-                {
-                    EventsApi = isApiHealthy ? "Healthy" : "Unhealthy"
-                }
-            };
-
-            if (isApiHealthy)
-            {
-                return Ok(healthStatus);
-            }
-            else
-            {
-                Response.StatusCode = 503; // Service Unavailable
-                return Json(healthStatus);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Health check failed");
-
-            var healthStatus = new
-            {
-                Status = "Unhealthy",
-                Timestamp = DateTime.UtcNow,
-                Error = "Health check failed"
-            };
-
-            Response.StatusCode = 503;
-            return Json(healthStatus);
-        }
-    }
-
     private static string GetUserFriendlyErrorMessage(string? statusCode)
     {
         return statusCode switch
@@ -178,5 +83,40 @@ public class HomeController(
             "503" => "Our services are temporarily unavailable. Please try again later.",
             _ => "An unexpected error occurred. Please try again later."
         };
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Health()
+    {
+        try
+        {
+            var isApiHealthy = await _eventsApiService.IsApiHealthyAsync();
+            var healthStatus = new
+            {
+                Status = isApiHealthy ? "Healthy" : "Degraded",
+                Timestamp = DateTime.UtcNow,
+                Dependencies = new { EventsApi = isApiHealthy ? "Healthy" : "Unhealthy" }
+            };
+
+            if (isApiHealthy)
+                return Ok(healthStatus);
+            else
+            {
+                Response.StatusCode = 503;
+                return Json(healthStatus);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Health check failed");
+            Response.StatusCode = 503;
+            return Json(new
+            {
+                Status = "Unhealthy",
+                Timestamp = DateTime.UtcNow,
+                Error = "Health check failed"
+            });
+        }
     }
 }

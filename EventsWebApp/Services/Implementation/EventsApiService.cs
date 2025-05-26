@@ -16,11 +16,9 @@ public class EventsApiService(
     private readonly IConfigurationService _configurationService = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
     private readonly IErrorHandlingService _errorHandlingService = errorHandlingService ?? throw new ArgumentNullException(nameof(errorHandlingService));
     private readonly ILogger<EventsApiService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly string? _apiKey;
 
     public async Task<IEnumerable<Event>> GetAllEventsAsync()
     {
-        _logger.LogInformation("Using API Key: {ApiKey}", _apiKey?.Substring(0, 8) + "...");
         try
         {
             _logger.LogInformation("Fetching all events from API");
@@ -356,25 +354,23 @@ public class EventsApiService(
         try
         {
             _logger.LogInformation("Checking if current API key has admin permissions");
-
+        
+            var apiKey = _configurationService.GetEventsApiKey();
             using var request = new HttpRequestMessage(HttpMethod.Get, "/api/events/admin/check");
-            request.Headers.Add("x-api-key", _apiKey);
-
+            request.Headers.Add("x-api-key", apiKey);
+        
             var response = await _httpClient.SendAsync(request);
-        
-            // If we get 200, we're admin. If we get 401/403, we're not admin.
             var isAdmin = response.IsSuccessStatusCode;
-        
+     
             _logger.LogInformation("Admin check result: {IsAdmin} (Status: {StatusCode})", 
                 isAdmin, response.StatusCode);
-            
+         
             return isAdmin;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error checking admin status, defaulting to non-admin");
-            return false; // Default to non-admin if check fails
+            return false;
         }
     }
-
 }

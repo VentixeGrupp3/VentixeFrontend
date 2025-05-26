@@ -18,14 +18,15 @@ public class UserContextService : IUserContextService
 
     public async Task<string> GetCurrentUserNameAsync()
     {
-        await Task.CompletedTask; // For async interface consistency
+        await Task.CompletedTask;
         
         try
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user?.Identity?.IsAuthenticated == true)
             {
-                return user.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown User";
+                var name = user.FindFirst(ClaimTypes.Name)?.Value;
+                return !string.IsNullOrEmpty(name) ? name : "Authenticated User";
             }
             return "Guest User";
         }
@@ -38,14 +39,15 @@ public class UserContextService : IUserContextService
 
     public async Task<string> GetCurrentUserRoleAsync()
     {
-        await Task.CompletedTask; // For async interface consistency
+        await Task.CompletedTask;
         
         try
         {
             var user = _httpContextAccessor.HttpContext?.User;
             if (user?.Identity?.IsAuthenticated == true)
             {
-                return user.FindFirst(ClaimTypes.Role)?.Value ?? "Guest";
+                var role = user.FindFirst(ClaimTypes.Role)?.Value;
+                return !string.IsNullOrEmpty(role) ? role : "User";
             }
             return "Guest";
         }
@@ -58,7 +60,7 @@ public class UserContextService : IUserContextService
 
     public async Task<bool> IsAdminAsync()
     {
-        await Task.CompletedTask; // For async interface consistency
+        await Task.CompletedTask;
         
         try
         {
@@ -74,7 +76,7 @@ public class UserContextService : IUserContextService
 
     public async Task<bool> IsAuthenticatedAsync()
     {
-        await Task.CompletedTask; // For async interface consistency
+        await Task.CompletedTask;
         
         try
         {

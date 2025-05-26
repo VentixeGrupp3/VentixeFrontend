@@ -5,10 +5,10 @@
 
     // Get user role service and check permissions
     var userRoleService = ViewContext.HttpContext.RequestServices.GetService<IUserRoleService>();
-    var isAdmin = await userRoleService.IsAdminAsync();
-    var canCreateEvents = await userRoleService.CanCreateEventsAsync();
-    var canEditEvents = await userRoleService.CanEditEventsAsync();
-    var canDeleteEvents = await userRoleService.CanDeleteEventsAsync();
+    var isAdmin = userRoleService != null && await userRoleService.IsAdminAsync();
+    var canCreateEvents = userRoleService != null && await userRoleService.CanCreateEventsAsync();
+    var canEditEvents = userRoleService != null && await userRoleService.CanEditEventsAsync();
+    var canDeleteEvents = userRoleService != null && await userRoleService.CanDeleteEventsAsync();
 }
 
 <div class="page-header">
@@ -196,21 +196,3 @@
         </div>
     }
 </div>
-
-<!-- User Role Information (for debugging - remove in production) -->
-@if (isAdmin)
-{
-    <div class="debug-info" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 0.5rem; border-left: 4px solid #28a745;">
-        <small>
-            <strong>Admin Mode:</strong> You have full access to create, edit, and delete events.
-        </small>
-    </div>
-}
-else
-{
-    <div class="debug-info" style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 0.5rem; border-left: 4px solid #17a2b8;">
-        <small>
-            <strong>User Mode:</strong> You can view events and make reservations.
-        </small>
-    </div>
-}
