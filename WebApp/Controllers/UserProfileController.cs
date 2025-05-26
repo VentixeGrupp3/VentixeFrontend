@@ -15,22 +15,22 @@ namespace WebApp.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = await _userManager.GetUserIdAsync(user);
-            var model = _client.getUserProfileByAppUserIdAsync(new getUserProfileByAppUserIdRequest()
+            var model = _client.getUserProfileByAppUserId(new getUserProfileByAppUserIdRequest()
             {
                 AppUserId = userId
 
             });
-            
+                
             if (model != null)
             {
                var profile = new ProfileInformationViewModel()
                 {
-                    FirstName = model.ResponseAsync.Result.FirstName,
-                    LastName = model.ResponseAsync.Result.LastName,
-                    StreetName = model.ResponseAsync.Result.StreetName,
-                    City = model.ResponseAsync.Result.City,
-                    PhoneNumber = model.ResponseAsync.Result.PhoneNumber,
-                    PostalCode = model.ResponseAsync.Result.PostalCode
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    StreetName = model.StreetName,
+                    City = model.City,
+                    PhoneNumber = model.PhoneNumber,
+                    PostalCode = model.PostalCode
                 };
                 return View(profile);
             }
