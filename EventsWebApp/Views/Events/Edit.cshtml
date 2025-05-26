@@ -1,0 +1,154 @@
+﻿@using EventsWebApp.Models.ViewModels
+@model EventFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<div class="edit-event-container">
+    <h2>Edit Event</h2>
+    <p class="form-description">Update the information below to modify your event. All fields marked with an asterisk (*) are required.</p>
+
+    <form asp-action="Edit" method="post" class="event-form">
+        @Html.AntiForgeryToken()
+
+        <input asp-for="EventId" type="hidden" />
+
+        <div asp-validation-summary="All" class="alert alert-danger validation-summary"></div>
+
+        <div class="form-section">
+            <h3 class="section-title">Event Information</h3>
+
+            <div class="form-group">
+                <label asp-for="EventName" class="form-label">Event Name *</label>
+                <input asp-for="EventName" class="form-control" placeholder="Enter the name of your event" />
+                <span asp-validation-for="EventName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EventCategory" class="form-label">Category *</label>
+                <select asp-for="EventCategory" class="form-control">
+                    <option value="">-- Select a Category --</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Value"
+                                    selected="@(category.Value == Model?.EventCategory)">
+                                @category.Text
+                            </option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="EventCategory" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4"
+                          placeholder="Describe your event (optional - up to 2000 characters)"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+                <small class="form-text text-muted">Help people understand what your event is about</small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Event Organizer Information</h3>
+            <p class="section-description">This information is used for event management and attendee communication.</p>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="OwnerName" class="form-label">Organizer Name *</label>
+                    <input asp-for="OwnerName" class="form-control"
+                           placeholder="Full name of the event organizer" />
+                    <span asp-validation-for="OwnerName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="OwnerEmail" class="form-label">Organizer Email *</label>
+                    <input asp-for="OwnerEmail" type="email" class="form-control"
+                           placeholder="email@example.com" />
+                    <span asp-validation-for="OwnerEmail" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label asp-for="OwnerAddress" class="form-label">Organizer Address *</label>
+                    <input asp-for="OwnerAddress" class="form-control"
+                           placeholder="Street address, city, postal code, country" />
+                    <span asp-validation-for="OwnerAddress" class="text-danger"></span>
+                    <small class="form-text text-muted">Complete address for official event documentation</small>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label asp-for="OwnerPhone" class="form-label">Organizer Phone *</label>
+                    <input asp-for="OwnerPhone" type="tel" class="form-control"
+                           placeholder="+46 123 456 789" />
+                    <span asp-validation-for="OwnerPhone" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Event Details</h3>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="EventDate" class="form-label">Event Date *</label>
+                    <input asp-for="EventDate" type="date" class="form-control" />
+                    <span asp-validation-for="EventDate" class="text-danger"></span>
+                    <small class="form-text text-muted">Format: YYYY-MM-DD</small>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label asp-for="EventTime" class="form-label">Event Time *</label>
+                    <input asp-for="EventTime" type="time" class="form-control" value="@Model?.EventTime" />
+                    <span asp-validation-for="EventTime" class="text-danger"></span>
+                    <small class="form-text text-muted">24-hour format (HH:MM)</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label asp-for="Location" class="form-label">Event Location *</label>
+                    <input asp-for="Location" class="form-control"
+                           placeholder="City, district, or general area" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label asp-for="Capacity" class="form-label">Event Capacity *</label>
+                    <input asp-for="Capacity" type="number" class="form-control" min="1"
+                           placeholder="Maximum attendees" />
+                    <span asp-validation-for="Capacity" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="VenueName" class="form-label">Venue Name *</label>
+                <input asp-for="VenueName" class="form-control"
+                       placeholder="Name of the specific venue or facility" />
+                <span asp-validation-for="VenueName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <a asp-action="Details" asp-route-id="@Model?.EventId" class="btn btn-secondary btn-lg">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <a asp-action="Details" asp-route-id="@Model?.EventId" class="btn btn-outline-info">
+                <i class="fas fa-eye"></i> View Event
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import url('colors.css');
+@import url('typography.css');
+@import url('components.css');
+@import url('tickets.css');
+@import url('responsive.css');
+
+/* Base Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 400;
+    font-style: normal;
+    font-family: var(--font);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    line-height: 1.5;
+}
+
+/* Focus Management */
+*:focus {
+    outline: 2px solid var(--primary-100);
+    outline-offset: 2px;
+}
+
+    *:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+/* Image Defaults */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Base Link Styles */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Form Defaults */
+form button[type="submit"] {
+    width: 100%;
+    margin: 1rem 0;
+}
+
+/* Utility Classes */
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mb-3 {
+    margin-bottom: 1rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Form Layout */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--headline-color);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+    .form-row .form-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+.col-md-4 {
+    flex: 0 0 33.333333%;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+}
+
+.col-md-8 {
+    flex: 0 0 66.666667%;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Responsive form layout */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+        .form-row .form-group {
+            min-width: 100%;
+        }
+
+    .col-md-4,
+    .col-md-6,
+    .col-md-8 {
+        flex: 1;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+/* Modal Base */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    max-width: 500px;
+    margin: 5% auto;
+}
+
+.modal-content {
+    background-color: var(--card-background-color);
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--headline-color);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted-color);
+    padding: 0;
+}
+
+    .close:hover {
+        color: var(--text-color);
+    }
+
+/* Modal Form Styles */
+.modal .form-group {
+    margin-bottom: 1rem;
+}
+
+.modal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-left: 0;
+}
+
+.modal .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--input-border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+}
+
+    .modal .form-control:focus {
+        outline: none;
+        border-color: var(--primary-100);
+        box-shadow: 0 0 0 2px rgba(252, 211, 254, 0.2);
+    }
+
+/* Badge Styles */
+.badge-success {
+    background-color: var(--success-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
