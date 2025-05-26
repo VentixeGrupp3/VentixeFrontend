@@ -48,6 +48,8 @@ public class AccountService(SignInManager<AppUser> signInManager, UserProfilePro
         return userName;
     }
 
+    
+
     public async Task SignOutAsync()
     {
         await _signInManager.SignOutAsync();
