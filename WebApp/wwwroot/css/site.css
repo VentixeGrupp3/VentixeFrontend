@@ -1752,3 +1752,56 @@ tbody td {
         height: 40px;
     }
 }
+/* VIV NEW delete card styles */
+/* wrap the two separate forms */
+/* Container tweaks */
+.delete-card {
+    padding: 2rem;
+    background: var(--card-background-color);
+    margin: 1rem 0;
+}
+
+/* Stack the form inputs nicely */
+.delete-forms {
+    margin-bottom: 1.5rem;
+}
+
+/* Button row */
+.delete-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+    /* Make all .btns in this area slightly bigger */
+    .delete-actions .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    /* Override primary for extra punch */
+    .delete-actions .btn-primary {
+        background-color: var(--primary-100);
+        border-color: var(--primary-100);
+        color: var(--gray-10);
+    }
+
+        .delete-actions .btn-primary:hover {
+            background-color: var(--primary-90);
+            border-color: var(--primary-90);
+        }
+
+    /* Keep cancel subtle */
+    .delete-actions .btn-secondary {
+        color: var(--gray-80);
+        background: transparent;
+        border: 1px solid var(--gray-40);
+    }
+
+        .delete-actions .btn-secondary:hover {
+            background: var(--gray-20);
+        }
+
+
+/* END VIV delete card styles */
