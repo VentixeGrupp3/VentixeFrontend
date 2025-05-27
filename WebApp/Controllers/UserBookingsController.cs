@@ -1,7 +1,10 @@
 ﻿using Frontend_Test.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using WebApp.Models.Booking;
 
 namespace Frontend_Test.Controllers;
 
@@ -10,14 +13,12 @@ public class UserBookingsController : Controller
 {
     private readonly HttpClient _http;
 
+
     public UserBookingsController(HttpClient http)
     {
         _http = http;
         _http.BaseAddress = new Uri("https://aspnet2grupp3booking-epcudwa2fvd4cych.swedencentral-01.azurewebsites.net/api/Booking/");
     }
-
-    private string GetCurrentUserId()
-    => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     public async Task<IActionResult> Index()
     {
@@ -80,5 +81,47 @@ public class UserBookingsController : Controller
         };
 
         return View(vm);
+    }
+
+    public IActionResult ReserveTickets(string id)
+    {
+        decimal regularPrice = 100m;
+        decimal vipPrice = 250m;
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var vm = new BookingOrderViewModel
+        {
+            BookingInfo = new BookingInfoViewModel
+            {
+                EventId = id,
+                UserId = userId
+            },
+            TicketInfo = new OrderTicketsViewModel
+            {
+                CategoryList = new[] {
+                new SelectListItem($"Regular – {regularPrice:C}", "Regular"),
+                new SelectListItem($"VIP – {vipPrice:C}",     "VIP")
+            },
+                QuantityList = Enumerable.Range(1, 9)
+                                     .Select(i => new SelectListItem(i.ToString(), i.ToString())),
+                TicketCategory = "Regular",
+                TicketPrice = regularPrice,
+                TicketQuantity = 1
+            }
+        };
+
+        return View(vm);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> OrderTickets(BookingOrderViewModel formData)
+    {
+        var response = await _http.PostAsJsonAsync("user-create", formData);
+
+        if (response.IsSuccessStatusCode)
+            return RedirectToAction("Index", "Bookings");
+
+        return View();
     }
 }

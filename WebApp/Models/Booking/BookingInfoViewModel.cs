@@ -1,6 +1,6 @@
 ﻿namespace Frontend_Test.Models;
 
-public class CreateBookingViewModel
+public class BookingInfoViewModel
 {
     public string UserId { get; set; } = null!;
     public string EventId { get; set; } = null!;
