@@ -1,0 +1,63 @@
+﻿@inject IAccountService _accountService;
+@inject UserManager<AppUser> _userManager;
+@{
+    var user = await _userManager.GetUserAsync(User);
+    var userName = "App User";
+    var roles = "";
+    if (user != null)
+    {
+        var userId = await _userManager.GetUserIdAsync(user);
+        userName = await _accountService.GetUserNameAsync(userId);
+        var roleList = await _userManager.GetRolesAsync(user);
+        if (roleList.Contains("Admin"))
+        {
+            roles = "Admin";
+        }
+        else
+        {
+            roles = "User";
+        }
+    }
+}
+
+
+<header>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation">
+        <i class="fas fa-bars"></i>
+    </button>
+
+
+    <div class="header-info">
+        <h2>@ViewData["Title"]</h2>
+        <span class="header-info-text">Hello @userName.Split(" ")[0], Welcome back</span>
+    </div>
+
+    <div class="header-search-wrapper">
+        <input type="text" id="nav-search" class="header-search" placeholder="Search anything" />
+
+    </div>
+   
+
+    <div class="header-user-dropdown">
+        <div class="header-user">
+            <div class="header-user-profile">
+                <div class="header-user-avatar">@userName[0]</div>
+                <div class="header-user-info">
+                    <div class="header-user-name">@userName</div>
+                    <div class="header-user-role">@roles</div>
+                </div>
+            </div>
+        </div>
+        <div class="header-user-dropdown-content">
+            <a asp-controller="UserProfile" asp-action="" class="header-user-dropdown-item">Profile Settings</a>
+            <a href="#" class="header-user-dropdown-item">Notifications</a>
+            <a href="#" class="header-user-dropdown-item">Help Center</a>
+
+        </div>
+       
+
+    </div>
+</header>
+
+<div class="nav-overlay" id="navOverlay"></div>

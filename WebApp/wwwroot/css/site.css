@@ -120,7 +120,6 @@ html, body {
     padding: 1rem;
 }
 
-/* Mobile Navigation Toggle */
 .nav-toggle {
     display: none;
     background: var(--primary-100);
@@ -130,8 +129,8 @@ html, body {
     border-radius: 8px;
     cursor: pointer;
     position: fixed;
-    top: 1rem;
-    left: 1rem;
+    bottom: 1rem;
+    right: 1rem; 
     z-index: 1001;
     font-size: 18px;
 }
@@ -157,13 +156,15 @@ nav {
     font-size: 14px;
     font-weight: 500;
     color: var(--text-color);
+    align-content:center;
 }
 
 .nav-item {
     display: flex;
-    align-items: center;
-    padding: 12px 16px;
+    flex-direction:row;
+    padding: 10px;
     color: var(--text-color);
+    max-height:60px;
     cursor: pointer;
     transition: all 0.2s;
     border-radius: 8px;
@@ -1299,6 +1300,10 @@ tbody td {
     .sidebar {
         height: 100%;
         padding:none;
+        display:none;
+    }
+    .sidebar.sidebar-active{
+        display:block;
     }
 
     header {
@@ -1434,6 +1439,10 @@ tbody td {
         height: 100%;
         min-height: auto;
         width: 100%;
+        display:none;
+    }
+    .sidebar.sidebar-active{
+        display:block;
     }
 
     .nav-item {

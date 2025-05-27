@@ -34,5 +34,8 @@
 
 
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Views\Partials\" />
+	</ItemGroup>
 
 </Project>
