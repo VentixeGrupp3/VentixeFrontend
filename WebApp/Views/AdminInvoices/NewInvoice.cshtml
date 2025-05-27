@@ -1,4 +1,5 @@
-﻿@model WebApp.Models.InvoiceModel
+﻿@model WebApp.ViewModels.CreateManualInvoiceViewModel
+
 @{
     ViewData["Title"] = "New Invoice";
 }
@@ -91,12 +92,12 @@
     <!-- Overrides in two columns -->
     <div class="grid-2">
         <div class="form-group">
-            <label asp-for="Fee">Custom Fee (SEK)</label>
-            <input asp-for="Fee" class="form-input" />
+            <label asp-for="CustomFee"></label>
+            <input asp-for="CustomFee" class="form-input" />
         </div>
         <div class="form-group">
-            <label asp-for="Tax">Custom Tax Rate (%)</label>
-            <input asp-for="Tax" class="form-input" />
+            <label asp-for="CustomTaxRate"></label>
+            <input asp-for="CustomTaxRate" class="form-input" />
         </div>
     </div>
 

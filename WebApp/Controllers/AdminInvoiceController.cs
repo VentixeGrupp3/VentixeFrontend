@@ -38,12 +38,10 @@ namespace WebApp.Controllers
         public IActionResult NewInvoice()
         {
             // start with an empty invoice
-            var vm = new InvoiceModel
+            var vm = new CreateManualInvoiceViewModel
             {
-                IssuedDate = System.DateTime.Today,
-                InvoiceItems = new List<InvoiceItemModel> {
-                    new InvoiceItemModel()  // one blank row
-                }
+                // copy defaults from your InvoiceModel if you like…
+                InvoiceItems = new List<InvoiceItemViewModel> { new InvoiceItemViewModel() }
             };
             return View(vm);
         }
