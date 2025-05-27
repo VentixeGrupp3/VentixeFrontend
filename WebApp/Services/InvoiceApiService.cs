@@ -15,6 +15,7 @@ namespace WebApp.Services
             Task<byte[]> DownloadInvoicePdfAsync(string userId, string invoiceId);
             Task<InvoiceModel> GetInvoiceByIdAsync(string id);
             Task<InvoiceModel> AdminCreateInvoiceAsync(CreateManualInvoiceViewModel vm);
+            Task<InvoiceModel> AdminUpdateInvoiceAsync(UpdateInvoiceViewModel vm);
         }
 
         public class InvoiceApiClient : IInvoiceApiClient
@@ -121,6 +122,23 @@ namespace WebApp.Services
 
                 return await res.Content.ReadFromJsonAsync<InvoiceModel>()
                        ?? throw new Exception("Empty response from AdminCreateInvoice");
+            }
+            public async Task<InvoiceModel> AdminUpdateInvoiceAsync(UpdateInvoiceViewModel vm)
+            {
+
+
+                // 2) Call the API
+                using var res = await _http.PutAsJsonAsync(
+                    "Invoices/admin-update-invoice",
+                    vm
+                );
+                if (!res.IsSuccessStatusCode)
+                {
+                    var text = await res.Content.ReadAsStringAsync();
+                    throw new Exception($"Invoice API failed ({res.StatusCode}): {text}");
+                }
+                return await res.Content.ReadFromJsonAsync<InvoiceModel>()
+                       ?? throw new Exception("Empty response from AdminUpdateInvoice");
             }
         }
     }
