@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using WebApp.Models;
+using WebApp.ViewModels;
 
 namespace WebApp.Services
 {
@@ -13,6 +14,7 @@ namespace WebApp.Services
             Task<byte[]> AdminDownloadInvoicePdfAsync(string invoiceId);
             Task<byte[]> DownloadInvoicePdfAsync(string userId, string invoiceId);
             Task<InvoiceModel> GetInvoiceByIdAsync(string id);
+            Task<InvoiceModel> AdminCreateInvoiceAsync(CreateManualInvoiceViewModel vm);
         }
 
         public class InvoiceApiClient : IInvoiceApiClient
@@ -107,7 +109,19 @@ namespace WebApp.Services
                 res.EnsureSuccessStatusCode();
                 return await res.Content.ReadFromJsonAsync<InvoiceModel>();
             }
+            public async Task<InvoiceModel> AdminCreateInvoiceAsync(CreateManualInvoiceViewModel vm)
+            {
 
+                using var res = await _http.PostAsJsonAsync("Invoices/admin-invoice-creation", vm);
+                if (!res.IsSuccessStatusCode)
+                {
+                    var text = await res.Content.ReadAsStringAsync();
+                    throw new Exception($"Invoice API failed ({res.StatusCode}): {text}");
+                }
+
+                return await res.Content.ReadFromJsonAsync<InvoiceModel>()
+                       ?? throw new Exception("Empty response from AdminCreateInvoice");
+            }
         }
     }
 }
