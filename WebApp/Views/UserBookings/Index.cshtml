@@ -50,7 +50,9 @@
                             <td class="booking-cell">
                                 <span class="booking-status-badge booking-status-confirmed">Confirmed</span>
                             </td>
-                            <td><a href="@Url.Action("BookingDetails", "Bookings", new { bookingId = booking.BookingId })" class="btn btn-primary">Details</a></td>
+                            <td>
+                                <a asp-controller="UserBookings" asp-route-bookingId="@booking.BookingId" asp-action="BookingDetails" class="btn btn-primary">Details</a>
+                            </td>
                         </tr>
                     }
                 </tbody>
