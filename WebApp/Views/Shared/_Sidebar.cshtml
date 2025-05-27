@@ -14,12 +14,22 @@
         </li>
 
         <li class="nav-item">
-            <a asp-controller="Bookings" asp-action="Bookings" class="nav-link">
+
                 <div class="nav-icon">
                     <img src="https://ventixe.blob.core.windows.net/ventixe-container/check_box_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Bookings" />
                 </div>
-                <span class="nav-text">Bookings</span>
-            </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="AdminBookings" asp-action="Index" class="nav-link">
+                        <span class="nav-text">Invoices</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="UserBookings" asp-action="Index" class="nav-link">
+                        <span class="nav-text">Bookings</span>
+                    </a>
+                }
         </li>
 
         <li class="nav-item">

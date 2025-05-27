@@ -1805,3 +1805,276 @@ tbody td {
 
 
 /* END VIV delete card styles */
+
+/*Bookings CSS Start*/
+.booking-form-group {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+    .booking-form-group .additional-info {
+        font-size: 0.7em;
+    }
+
+.booking-form-label {
+    font-size: 1em;
+    margin-left: 1.5rem;
+}
+
+.booking-form-input {
+    border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    outline: none;
+    color: var(--input-text-color);
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-background-color);
+    font-size: 1em;
+}
+
+    .booking-form-input::placeholder {
+        color: var(--input-placeholder-color);
+        font-size: 0.9em;
+    }
+
+    .booking-form-input:focus {
+        border-color: var(--input-border-focus-color);
+    }
+
+.booking-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.booking-table-wrapper {
+    overflow-x: auto;
+}
+
+.booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.booking-header {
+    background-color: var(--background-color);
+    color: var(--gray-70);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    position: relative;
+}
+
+    .booking-header:after {
+        content: '\25BE';
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        color: var(--gray-70);
+    }
+
+.booking-cell {
+    padding: 16px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.booking-row:hover {
+    background-color: var(--gray-20);
+}
+
+.booking-invoice-id {
+    font-weight: 600;
+    color: var(--gray-70);
+}
+
+.booking-date-time {
+    color: var(--gray-70);
+    font-size: 13px;
+}
+
+    .booking-date-time .booking-time {
+        display: block;
+        margin-top: 2px;
+    }
+
+.booking-customer-name {
+    font-weight: 500;
+    color: var(--gray-100);
+}
+
+.booking-event-name {
+    font-weight: 500;
+    color: var(--gray-100);
+    margin-bottom: 4px;
+}
+
+.booking-event-category {
+    color: var(--gray-70);
+    font-size: 12px;
+}
+
+.booking-ticket-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+    .booking-ticket-badge:before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+    }
+
+.booking-ticket-vip:before {
+    background-color: #17a2b8;
+}
+
+.booking-ticket-vip {
+    background-color: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.booking-ticket-platinum:before {
+    background-color: #e83e8c;
+}
+
+.booking-ticket-platinum {
+    background-color: rgba(232, 62, 140, 0.1);
+    color: #e83e8c;
+}
+
+.booking-ticket-cat1:before {
+    background-color: #343a40;
+}
+
+.booking-ticket-cat1 {
+    background-color: rgba(52, 58, 64, 0.1);
+    color: #343a40;
+}
+
+.booking-ticket-cat2:before {
+    background-color: #343a40;
+}
+
+.booking-ticket-cat2 {
+    background-color: rgba(52, 58, 64, 0.1);
+    color: #343a40;
+}
+
+.booking-ticket-cat3:before {
+    background-color: #343a40;
+}
+
+.booking-ticket-cat3 {
+    background-color: rgba(52, 58, 64, 0.1);
+    color: #343a40;
+}
+
+.booking-ticket-silver:before {
+    background-color: #6c757d;
+}
+
+.booking-ticket-silver {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.booking-ticket-gold:before {
+    background-color: #ffc107;
+}
+
+.booking-ticket-gold {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #856404;
+}
+
+.booking-price {
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.booking-quantity {
+    text-align: center;
+    font-weight: 500;
+}
+
+.booking-amount {
+    font-weight: 600;
+    color: var(--gray-100);
+}
+
+.booking-status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.booking-status-confirmed {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.booking-status-pending {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #856404;
+}
+
+.booking-status-cancelled {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: var(--gray-70);
+}
+
+.booking-voucher-code {
+    color: var(--gray-70);
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+}
+
+.booking-text-center {
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .booking-container {
+        margin: 10px;
+        border-radius: 4px;
+    }
+
+    .booking-header, .booking-cell {
+        padding: 8px 12px;
+    }
+
+    .booking-date-time {
+        font-size: 11px;
+    }
+
+    .booking-event-name {
+        font-size: 13px;
+    }
+
+    .booking-ticket-badge, .booking-status-badge {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+}
+
+/*Bookings CSS END*/
