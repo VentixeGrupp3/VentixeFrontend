@@ -14,12 +14,22 @@
         </li>
 
         <li class="nav-item">
-            <a asp-controller="Bookings" asp-action="Bookings" class="nav-link">
+
                 <div class="nav-icon">
                     <img src="https://ventixe.blob.core.windows.net/ventixe-container/check_box_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Bookings" />
                 </div>
-                <span class="nav-text">Bookings</span>
-            </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="AdminBookings" asp-action="Index" class="nav-link">
+                        <span class="nav-text">Bookings</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="UserBookings" asp-action="Index" class="nav-link">
+                        <span class="nav-text">Bookings</span>
+                    </a>
+                }
         </li>
 
         <li class="nav-item">
@@ -41,55 +51,67 @@
         </li>
 
         <li class="nav-item">
-            <a asp-controller="Inbox" asp-action="Inbox" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/mail_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Inbox" />
-                </div>
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/mail_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Inbox" />
+            </div>
+            <a asp-controller="Inbox" asp-action="Inbox" class="nav-link">  
                 <span class="nav-text">Inbox</span>
             </a>
         </li>
 
         <li class="nav-item">
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/calendar_month_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Calendar" />
+            </div>
             <a asp-controller="Calendar" asp-action="Calendar" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/calendar_month_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Calendar" />
-                </div>
+               
                 <span class="nav-text">Calendar</span>
             </a>
         </li>
 
         <li class="nav-item">
+
             <a asp-controller="Events" asp-action="Index" class="nav-link">
                 <div class="nav-icon">
                     <img src="https://ventixe.blob.core.windows.net/ventixe-container/local_activity_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Events" />
                 </div>
+
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/local_activity_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Events" />
+            </div>
+            <a asp-controller="Events" asp-action="Events" class="nav-link">
+                
+
                 <span class="nav-text">Events</span>
             </a>
         </li>
 
         <li class="nav-item">
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/payments_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Financials" />
+            </div>
             <a asp-controller="Financials" asp-action="Financials" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/payments_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Financials" />
-                </div>
+               
                 <span class="nav-text">Financials</span>
             </a>
         </li>
 
         <li class="nav-item">
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/photo_library_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Gallery" />
+            </div>
             <a asp-controller="Gallery" asp-action="Gallery" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/photo_library_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Gallery" />
-                </div>
+               
                 <span class="nav-text">Gallery</span>
             </a>
         </li>
 
         <li class="nav-item">
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/star_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Feedback" />
+            </div>
             <a asp-controller="Feedback" asp-action="Feedback" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/star_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Feedback" />
-                </div>
+                
                 <span class="nav-text">Feedback</span>
             </a>
         </li>
@@ -100,11 +122,12 @@
             </div>
         </li>
 
-        <li class="nav-item nav-logout">
+        <li class="nav-item">
+            <div class="nav-icon">
+                <img src="https://ventixe.blob.core.windows.net/ventixe-container/logout_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Logout" />
+            </div>
             <a asp-controller="Login" asp-action="Logout" class="nav-link">
-                <div class="nav-icon">
-                    <img src="https://ventixe.blob.core.windows.net/ventixe-container/logout_24dp_000_FILL0_wght400_GRAD0_opsz24.svg" alt="Logout" />
-                </div>
+                
                 <span class="nav-text">Sign Out</span>
             </a>
         </li>
