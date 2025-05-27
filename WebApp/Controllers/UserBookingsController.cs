@@ -83,7 +83,7 @@ public class UserBookingsController : Controller
         return View(vm);
     }
 
-    public IActionResult ReserveTickets(string id)
+    public IActionResult ReserveTickets(string eventId)
     {
         decimal regularPrice = 100m;
         decimal vipPrice = 250m;
@@ -94,7 +94,7 @@ public class UserBookingsController : Controller
         {
             BookingInfo = new BookingInfoViewModel
             {
-                EventId = id,
+                EventId = eventId,
                 UserId = userId
             },
             TicketInfo = new OrderTicketsViewModel
