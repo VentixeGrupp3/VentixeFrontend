@@ -1,0 +1,151 @@
+﻿@model WebApp.ViewModels.UpdateInvoiceViewModel
+
+<h2>Change Invoice #@Model.InvoiceId</h2>
+
+<form asp-action="SaveChangedInvoice" method="post" class="compact-form">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="InvoiceId" />
+
+    <!-- 3-column readonly IDs -->
+    <div class="grid-3">
+        <div class="form-group">
+            <label asp-for="BookingId"></label>
+            <input asp-for="BookingId" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserId"></label>
+            <input asp-for="UserId" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventId"></label>
+            <input asp-for="EventId" class="form-input" readonly />
+        </div>
+    </div>
+
+    <!-- 2-column Billing Snapshot -->
+    <h4>Billing Snapshot</h4>
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserEmail"></label>
+            <input asp-for="UserEmail" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserAddress"></label>
+            <input asp-for="UserAddress" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserPhone"></label>
+            <input asp-for="UserPhone" class="form-input" />
+        </div>
+    </div>
+
+    <!-- 2-column Event Snapshot -->
+    <h4>Event Snapshot</h4>
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="EventName"></label>
+            <input asp-for="EventName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerName"></label>
+            <input asp-for="EventOwnerName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerEmail"></label>
+            <input asp-for="EventOwnerEmail" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerAddress"></label>
+            <input asp-for="EventOwnerAddress" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerPhone"></label>
+            <input asp-for="EventOwnerPhone" class="form-input" />
+        </div>
+    </div>
+
+    <!-- Paid checkbox -->
+    <div class="form-checkbox">
+        <input asp-for="InvoicePaid" type="checkbox" />
+        <label asp-for="InvoicePaid"></label>
+    </div>
+
+    <!-- Custom overrides -->
+    <h4>Overrides</h4>
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="CustomFee"></label>
+            <input asp-for="CustomFee" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label>Tax Rate</label>
+            <p>25 %</p>
+            @*<input type="hidden"
+                   asp-for="CustomTaxRate"
+                   value="0.25" />*@
+        </div>
+    </div>
+
+    <!-- Adjustment info -->
+    <h4>Adjustment</h4>
+    <div class="form-group">
+        <label asp-for="AdjustedBy"></label>
+        <input asp-for="AdjustedBy" class="form-input" />
+    </div>
+    <div class="form-group">
+        <label asp-for="AdjustmentReason"></label>
+        <textarea asp-for="AdjustmentReason" class="form-input"></textarea>
+    </div>
+
+    <!-- Line Items -->
+    <h4>Line Items</h4>
+    <div class="grid-3">
+        <div class="form-group"><strong>Category</strong></div>
+        <div class="form-group"><strong>Quantity</strong></div>
+        <div class="form-group"><strong>Unit Price</strong></div>
+    </div>
+    @for (int i = 0; i < Model.InvoiceItems.Count; i++)
+    {
+        <div class="grid-3">
+            <!-- now editable -->
+            <div class="form-group">
+                <input asp-for="InvoiceItems[@i].TicketCategory"
+                       class="form-input"
+                       placeholder="Category" />
+                <span asp-validation-for="InvoiceItems[@i].TicketCategory"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="InvoiceItems[@i].Quantity"
+                       class="form-input"
+                       placeholder="Qty" />
+                <span asp-validation-for="InvoiceItems[@i].Quantity"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="InvoiceItems[@i].Price"
+                       class="form-input"
+                       placeholder="Price" />
+                <span asp-validation-for="InvoiceItems[@i].Price"
+                      class="text-danger"></span>
+            </div>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.PartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -34,6 +34,7 @@ namespace WebApp.Controllers
                 fileDownloadName: $"invoice_{id}.pdf"
             );
         }
+        [HttpGet]
         public IActionResult NewInvoice()
         {
             // start with an empty invoice
@@ -56,5 +57,55 @@ namespace WebApp.Controllers
             var created = await _api.AdminCreateInvoiceAsync(vm);
             return RedirectToAction("Index", new { selectedId = created.InvoiceId });
         }
+        [HttpGet]
+        public async Task<IActionResult> ChangeInvoice(string id)
+        {
+            // 1) fetch the invoice by ID
+            var inv = await _api.GetInvoiceByIdAsync(id);
+
+            // 2) map it into your VM
+            var vm = new UpdateInvoiceViewModel
+            {
+                InvoiceId = inv.InvoiceId,
+                UserId = inv.UserId,
+                BookingId = inv.BookingId,
+                EventId = inv.EventId,
+                UserName = inv.UserName,
+                UserEmail = inv.UserEmail,
+                UserAddress = inv.UserAddress,
+                UserPhone = inv.UserPhone,
+                EventName = inv.EventName,
+                EventOwnerName = inv.EventOwnerName,
+                EventOwnerEmail = inv.EventOwnerEmail,
+                EventOwnerAddress = inv.EventOwnerAddress,
+                EventOwnerPhone = inv.EventOwnerPhone,
+                InvoicePaid = inv.InvoicePaid,
+                CustomFee = inv.Fee,
+                CustomTaxRate = (decimal?).25,
+                AdjustedBy = "",              // let admin fill
+                AdjustmentReason = "",
+                InvoiceItems = inv.InvoiceItems
+                    .Select(i => new InvoiceItemViewModel
+                    {
+                        TicketCategory = i.TicketCategory,
+                        Quantity = i.Quantity,
+                        Price = i.Price
+                    }).ToList()
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveChangedInvoice(UpdateInvoiceViewModel vm)
+        {
+            if (!ModelState.IsValid)
+                return View("ChangeInvoice", vm);
+
+            var updated = await _api.AdminUpdateInvoiceAsync(vm);
+            return RedirectToAction("Index", new { selectedId = updated.InvoiceId });
+        }
+
     }
 }
