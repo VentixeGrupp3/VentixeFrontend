@@ -11,7 +11,7 @@
 
     <div class="userprofile-form-body">
         <form method="post" asp-action="UpdateProfile" asp-controller="UserProfile" novalidate>
-            <!-- Personal Information -->
+            <input asp-for="Id" type="hidden"/>
             <div class="userprofile-form-section">
                 <h3 class="userprofile-form-section-title">Personal Information</h3>
 
@@ -38,7 +38,6 @@
                 </div>
             </div>
 
-            <!-- Address Information -->
             <div class="userprofile-form-section">
                 <h3 class="userprofile-form-section-title">Address Information</h3>
 

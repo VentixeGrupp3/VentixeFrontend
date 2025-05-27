@@ -15,7 +15,7 @@ namespace WebApp.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
             var userId = await _userManager.GetUserIdAsync(user);
-            var model = _client.getUserProfileByAppUserId(new getUserProfileByAppUserIdRequest()
+            var model =  _client.getUserProfileByAppUserId(new getUserProfileByAppUserIdRequest()
             {
                 AppUserId = userId
 
@@ -25,12 +25,14 @@ namespace WebApp.Controllers
             {
                var profile = new ProfileInformationViewModel()
                 {
+                    Id = model.Id,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     StreetName = model.StreetName,
                     City = model.City,
                     PhoneNumber = model.PhoneNumber,
-                    PostalCode = model.PostalCode
+                    PostalCode = model.PostalCode,
+                    
                 };
                 return View(profile);
             }
@@ -39,6 +41,30 @@ namespace WebApp.Controllers
                 return View();
             }
 
+        }
+
+        public async Task <IActionResult> UpdateProfile(ProfileInformationViewModel model)
+        {
+            
+            try
+            {
+                var response = _client.updateUserProfile(new updateUserProfileRequest
+                {
+                    Id = model.Id,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    StreetName = model.StreetName,
+                    City = model.City,
+                    PhoneNumber = model.PhoneNumber,
+                    PostalCode = model.PostalCode
+                });
+                return RedirectToAction("Index");
+
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Index");
+            }
         }
     }
 }
