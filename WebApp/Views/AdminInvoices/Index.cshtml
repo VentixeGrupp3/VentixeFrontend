@@ -153,6 +153,12 @@
                        class="btn btn-outline-primary">
                         Change Invoice
                     </a>
+                    <a asp-action="SoftDeleteInvoice"
+                       asp-controller="AdminInvoices"
+                       asp-route-id="@inv.InvoiceId"
+                       class="btn btn-warning">
+                        Delete
+                    </a>
                 </div>
             </section>
         }
