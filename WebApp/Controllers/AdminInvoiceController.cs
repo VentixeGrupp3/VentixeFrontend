@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Models;
 using WebApp.ViewModels;
 using static WebApp.Services.InvoiceApiService;
 
@@ -23,6 +24,37 @@ namespace WebApp.Controllers
                                   ?? invoices.FirstOrDefault()
             };
             return View(vm);
+        }
+        public async Task<IActionResult> Download(string id)
+        {
+            var pdf = await _api.AdminDownloadInvoicePdfAsync(id);
+            return File(
+                pdf,
+                contentType: "application/pdf",
+                fileDownloadName: $"invoice_{id}.pdf"
+            );
+        }
+        public IActionResult NewInvoice()
+        {
+            // start with an empty invoice
+            var vm = new InvoiceModel
+            {
+                IssuedDate = System.DateTime.Today,
+                InvoiceItems = new List<InvoiceItemModel> {
+                    new InvoiceItemModel()  // one blank row
+                }
+            };
+            return View(vm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveInvoice(CreateManualInvoiceViewModel vm)
+        {
+            if (!ModelState.IsValid)
+                return View("NewInvoice", vm);
+
+            var created = await _api.AdminCreateInvoiceAsync(vm);
+            return RedirectToAction("Index", new { selectedId = created.InvoiceId });
         }
     }
 }

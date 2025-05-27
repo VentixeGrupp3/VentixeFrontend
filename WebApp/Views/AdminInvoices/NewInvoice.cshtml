@@ -1,0 +1,106 @@
+﻿@model WebApp.Models.InvoiceModel
+@{
+    ViewData["Title"] = "New Invoice";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="SaveInvoice" method="post" class="compact-form">
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <!-- 3-column reference IDs -->
+    <div class="grid-3">
+        <div class="form-group">
+            <label asp-for="BookingId"></label>
+            <input asp-for="BookingId" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserId"></label>
+            <input asp-for="UserId" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventId"></label>
+            <input asp-for="EventId" class="form-input" />
+        </div>
+    </div>
+
+    <!-- 2-column Billing Snapshot -->
+    <h4>Billing Snapshot</h4>
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="UserName"></label>
+            <input asp-for="UserName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserEmail"></label>
+            <input asp-for="UserEmail" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserAddress"></label>
+            <input asp-for="UserAddress" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="UserPhone"></label>
+            <input asp-for="UserPhone" class="form-input" />
+        </div>
+    </div>
+
+    <!-- 2-column Event Snapshot -->
+    <h4>Event Snapshot</h4>
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="EventName"></label>
+            <input asp-for="EventName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerName"></label>
+            <input asp-for="EventOwnerName" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerEmail"></label>
+            <input asp-for="EventOwnerEmail" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerAddress"></label>
+            <input asp-for="EventOwnerAddress" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="EventOwnerPhone"></label>
+            <input asp-for="EventOwnerPhone" class="form-input" />
+        </div>
+    </div>
+
+    <!-- Line Items: still one row for now, but you could later JS-clone these -->
+    <h4>Line Items</h4>
+    <div class="grid-3">
+        <div class="form-group">
+            <label asp-for="InvoiceItems[0].TicketCategory"></label>
+            <input asp-for="InvoiceItems[0].TicketCategory" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="InvoiceItems[0].Quantity"></label>
+            <input asp-for="InvoiceItems[0].Quantity" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="InvoiceItems[0].Price"></label>
+            <input asp-for="InvoiceItems[0].Price" class="form-input" />
+        </div>
+    </div>
+
+    <!-- Overrides in two columns -->
+    <div class="grid-2">
+        <div class="form-group">
+            <label asp-for="Fee">Custom Fee (SEK)</label>
+            <input asp-for="Fee" class="form-input" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Tax">Custom Tax Rate (%)</label>
+            <input asp-for="Tax" class="form-input" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Invoice</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+</form>
