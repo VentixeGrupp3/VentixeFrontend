@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
-using WebApp.Models.Booking;
 
 namespace Frontend_Test.Controllers;
 
@@ -83,6 +82,7 @@ public class UserBookingsController : Controller
         return View(vm);
     }
 
+
     public IActionResult ReserveTickets(string eventId)
     {
         decimal regularPrice = 100m;
@@ -90,35 +90,20 @@ public class UserBookingsController : Controller
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var vm = new BookingOrderViewModel
+        var vm = new BookingInfoViewModel
         {
-            BookingInfo = new BookingInfoViewModel
-            {
-                EventId = eventId,
-                UserId = userId
-            },
-            TicketInfo = new OrderTicketsViewModel
-            {
-                CategoryList = new[] {
-                new SelectListItem($"Regular – {regularPrice:C}", "Regular"),
-                new SelectListItem($"VIP – {vipPrice:C}",     "VIP")
-            },
-                QuantityList = Enumerable.Range(1, 9)
-                                     .Select(i => new SelectListItem(i.ToString(), i.ToString())),
-                TicketCategory = "Regular",
-                TicketPrice = regularPrice,
-                TicketQuantity = 1
-            }
+            EventId = eventId,
+            UserId = userId
         };
-
+            
         return View(vm);
     }
 
     [HttpPost]
-    public async Task<IActionResult> OrderTickets(BookingOrderViewModel formData)
+    public async Task<IActionResult> OrderTickets(BookingInfoViewModel formData)
     {
         var response = await _http.PostAsJsonAsync("user-create", formData);
-
+        
         if (response.IsSuccessStatusCode)
             return RedirectToAction("Index", "Bookings");
 

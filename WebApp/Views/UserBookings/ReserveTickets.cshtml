@@ -1,48 +1,55 @@
-﻿@model BookingOrderViewModel
+﻿
+@model BookingInfoViewModel
 
 
 
 <form asp-action="OrderTickets" asp-controller="UserBookings" method="post" novalidate>
-    <input type="hidden" asp-for="BookingInfo.UserId" />
-    <input type="hidden" asp-for="BookingInfo.EventId" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="EventId" />
 
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.FirstName" class="form-input" placeholder="First Name" />
+        <input asp-for="FirstName" class="form-input" placeholder="First Name" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.LastName" class="form-input" placeholder="Last Name" />
+        <input asp-for="LastName" class="form-input" placeholder="Last Name" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.StreetName" class="form-input" placeholder="Street Name" />
+        <input asp-for="StreetName" class="form-input" placeholder="Street Name" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.PostalCode" class="form-input" placeholder="Postal Code" />
+        <input asp-for="PostalCode" class="form-input" placeholder="Postal Code" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.City" class="form-input" placeholder="City" />
+        <input asp-for="City" class="form-input" placeholder="City" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.Email" class="form-input" placeholder="Email" />
+        <input asp-for="Email" class="form-input" placeholder="Email" />
     </div>
     <div class="booking-form-group">
-        <input asp-for="BookingInfo.Phone" class="form-input" placeholder="Phone Number" />
+        <input asp-for="Phone" class="form-input" placeholder="Phone Number" />
     </div>
 
-    <input type="hidden" asp-for="TicketInfo.TicketId" />
-
+@*     <input type="hidden" asp-for="TicketId" />
+ *@
     <div class="booking-form-group">
-        <label asp-for="TicketInfo.TicketCategory">Ticket Type</label>
-        <select asp-for="TicketInfo.TicketCategory"
-                asp-items="Model.TicketInfo.CategoryList"
-                class="form-input">
+        <label asp-for="TicketId" class="booking-form-label">Ticket Type</label>
+        <select asp-for="TicketId" class="booking-form-quantity-input">
+            <option value="8258c510-a1c5-416b-9020-7cd9b7a9a239"> Regular - $300</option>
+            <option value="7238c01e-9905-4441-95f2-0fd5cd603e84"> VIP $1000</option>
         </select>
     </div>
 
     <div class="booking-form-quantity">
-        <label asp-for="TicketInfo.TicketQuantity">Quantity</label>
-        <select asp-for="TicketInfo.TicketQuantity"
-                asp-items="Model.TicketInfo.QuantityList"
-                class="booking-form-quantity-input">
+        <label asp-for="TicketQuantity">Quantity</label>
+        <select asp-for="TicketQuantity" class="booking-form-quantity-input">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
         </select>
     </div>
     
