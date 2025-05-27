@@ -1,4 +1,5 @@
-﻿using WebApp.Models;
+﻿using System.Net;
+using WebApp.Models;
 
 namespace WebApp.Services
 {
@@ -21,22 +22,22 @@ namespace WebApp.Services
 
             public async Task<IEnumerable<InvoiceModel>> GetMyInvoicesAsync(string userId)
             {
-                // build the GET /api/Invoices/user-invoices
                 using var req = new HttpRequestMessage(HttpMethod.Get, "Invoices/user-invoices");
-
-                // add the required x-user-id header
                 req.Headers.Add("x-user-id", userId);
 
                 using var res = await _http.SendAsync(req);
-                if (!res.IsSuccessStatusCode)
-                {
-                    var text = await res.Content.ReadAsStringAsync();
-                    throw new Exception($"Invoice API failed ({res.StatusCode}): {text}");
-                }
 
-                // deserialize the JSON payload
+                // 1) If the API replies 404 (and you return an empty array from the server),
+                //    we treat that as “no invoices” rather than an error:
+                if (res.StatusCode == HttpStatusCode.NotFound)
+                    return Enumerable.Empty<InvoiceModel>();
+
+                // 2) All other non‐2xx statuses bubble up as exceptions:
+                res.EnsureSuccessStatusCode();
+
+                // 3) Deserialize; if the body is [] or null, return an empty list
                 var invoices = await res.Content.ReadFromJsonAsync<IEnumerable<InvoiceModel>>();
-                return invoices ?? new List<InvoiceModel>();
+                return invoices ?? Enumerable.Empty<InvoiceModel>();
             }
             public async Task<InvoiceModel> PayInvoiceAsync(string userId, string invoiceId)
             {
