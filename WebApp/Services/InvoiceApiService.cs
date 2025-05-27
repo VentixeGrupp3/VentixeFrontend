@@ -16,6 +16,8 @@ namespace WebApp.Services
             Task<InvoiceModel> GetInvoiceByIdAsync(string id);
             Task<InvoiceModel> AdminCreateInvoiceAsync(CreateManualInvoiceViewModel vm);
             Task<InvoiceModel> AdminUpdateInvoiceAsync(UpdateInvoiceViewModel vm);
+            Task HardDeleteInvoiceAsync(string invoiceId);
+            Task SoftDeleteInvoiceAsync(DeleteInvoiceViewModel form);
         }
 
         public class InvoiceApiClient : IInvoiceApiClient
@@ -139,6 +141,17 @@ namespace WebApp.Services
                 }
                 return await res.Content.ReadFromJsonAsync<InvoiceModel>()
                        ?? throw new Exception("Empty response from AdminUpdateInvoice");
+            }
+            public async Task HardDeleteInvoiceAsync(string invoiceId)
+            {
+                var res = await _http.DeleteAsync($"Invoices/admin-hard-delete-invoice/{invoiceId}");
+                res.EnsureSuccessStatusCode();
+            }
+
+            public async Task SoftDeleteInvoiceAsync(DeleteInvoiceViewModel vm)
+            {
+                var res = await _http.PutAsJsonAsync("Invoices/admin-soft-delete-invoice", vm);
+                res.EnsureSuccessStatusCode();
             }
         }
     }
