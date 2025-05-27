@@ -24,29 +24,32 @@ public class UserBookingsController : Controller
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
-            return Challenge();   // or BadRequest, RedirectToLogin, etc.
+            return Challenge();
 
-        // 2) Make sure we don’t double-add it if this controller is reused
         if (_http.DefaultRequestHeaders.Contains("x-user-id"))
             _http.DefaultRequestHeaders.Remove("x-user-id");
 
-        // 3) Add it to your outgoing request
         _http.DefaultRequestHeaders.Add("x-user-id", userId);
         _http.DefaultRequestHeaders.Add("x-api-key", "1a76c263-4d83-4c98-b913-9029f9dfad7d");
 
-        // 4) Fire off the call (your API “user-bookings” endpoint will now see the header)
         var bookings = await _http
             .GetFromJsonAsync<IEnumerable<BookingViewModel>>($"user-bookings/{userId}");
 
         return View(bookings);
-
-        //    var bookings = await _http.GetFromJsonAsync<IEnumerable<BookingViewModel>>($"user-bookings/{userId}");
-
-        //    return View(bookings);
     }
 
     public async Task<IActionResult> BookingDetails(string bookingId)
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            return Challenge();
+
+        if (_http.DefaultRequestHeaders.Contains("x-user-id"))
+            _http.DefaultRequestHeaders.Remove("x-user-id");
+
+        _http.DefaultRequestHeaders.Add("x-user-id", bookingId);
+        _http.DefaultRequestHeaders.Add("x-api-key", "1a76c263-4d83-4c98-b913-9029f9dfad7d");
+
         var booking = await _http.GetFromJsonAsync<BookingViewModel>($"bookingdetails/{bookingId}");
 
         var vm = new BookingViewModel
