@@ -75,9 +75,7 @@
 <!-- Action Buttons -->
 <div class="mt-3 d-flex flex-wrap gap-2">
     <!-- Reserve Tickets -->
-    <a href="#reserveForm" class="btn btn-primary btn-lg" onclick="document.getElementById('reserveForm').style.display='block';">
-        <i class="fas fa-ticket-alt"></i> Reserve Tickets
-    </a>
+    <a asp-action="ReserveTickets" asp-controller="UserBookings" asp-route-EventId="@Model.EventId" class="btn btn-primary"> Reserve Tickets</a>
 
     @if (canEditEvents)
     {

@@ -1,0 +1,78 @@
+﻿@using Frontend_Test.Models
+@model BookingViewModel;
+
+<div class="container mt-4">
+    <h2>@ViewBag.Title</h2>
+
+    <dl class="row">
+        <dt class="col-sm-3">Booking Number</dt>
+        <dd class="col-sm-9">@Model.BookingNumber</dd>
+
+        <dt class="col-sm-3">Booked By</dt>
+        <dd class="col-sm-9">
+            @Model.BookingFirstName @Model.BookingLastName
+        </dd>
+
+        <dt class="col-sm-3">Contact</dt>
+        <dd class="col-sm-9">
+            <div>@Model.BookingEmail</div>
+            <div>@Model.BookingPhone</div>
+        </dd>
+
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">@Model.BookingStreetName</dd>
+        <dd class="col-sm-9">@Model.BookingCity</dd>
+        <dd class="col-sm-9">@Model.BookingPostalCode</dd>
+
+
+        <dt class="col-sm-3">Event</dt>
+        <dd class="col-sm-9">
+            <strong>@Model.EventName</strong>
+            <span class="text-muted">(@Model.EventCategory)</span><br />
+            @Model.EventDate?.ToString("yyyy-MM-dd")
+            at @Model.EventTime?.ToString("HH:mm")
+        </dd>
+    </dl>
+
+    <h3>Tickets</h3>
+    @if (Model.Tickets != null && Model.Tickets.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <tr>
+                        <td>@ticket.TicketCategory</td>
+                        <td>@ticket.TicketQuantity</td>
+                        <td>@ticket.TicketPrice.ToString("C")</td>
+                        <td>@(ticket.TicketQuantity* ticket.TicketPrice)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-right">
+            <strong>Total: @(Model.Tickets.Sum(t => t.TicketPrice * t.TicketQuantity).ToString("C"))</strong>
+        </div>
+    }
+    else
+    {
+        <p>No tickets in this booking.</p>
+    }
+    <div>
+        <a asp-action="UpdateBooking" asp-controller="AdminBookings" asp-route-EventId="@Model.BookingId" class="btn btn-primary"> Update Booking</a>
+        <a asp-action="DeleteBooking" asp-controller="AdminBookings" asp-route-EventId="@Model.BookingId" class="btn btn-primary"> Delete Booking</a>
+    </div>
+
+
+    <a href="@Url.Action("Index", "Bookings")" class="btn btn-secondary mt-3">
+        ← Back to Bookings
+    </a>
+</div>

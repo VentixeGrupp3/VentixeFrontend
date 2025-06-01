@@ -1,6 +1,8 @@
 ﻿using Frontend_Test.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 
 namespace Frontend_Test.Controllers;
@@ -10,14 +12,12 @@ public class UserBookingsController : Controller
 {
     private readonly HttpClient _http;
 
+
     public UserBookingsController(HttpClient http)
     {
         _http = http;
         _http.BaseAddress = new Uri("https://aspnet2grupp3booking-epcudwa2fvd4cych.swedencentral-01.azurewebsites.net/api/Booking/");
     }
-
-    private string GetCurrentUserId()
-    => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
     public async Task<IActionResult> Index()
     {
@@ -80,5 +80,33 @@ public class UserBookingsController : Controller
         };
 
         return View(vm);
+    }
+
+
+    public IActionResult ReserveTickets(string eventId)
+    {
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var vm = new BookingInfoViewModel
+        {
+            EventId = eventId,
+            UserId = userId
+        };
+            
+        return View(vm);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> OrderTickets(BookingInfoViewModel formData)
+    {
+        _http.DefaultRequestHeaders.Add("x-api-key", "1a76c263-4d83-4c98-b913-9029f9dfad7d");
+
+        var response = await _http.PostAsJsonAsync("user-create", formData);
+        
+        if (response.IsSuccessStatusCode)
+            return RedirectToAction("Index", "Bookings");
+
+        return View();
     }
 }
