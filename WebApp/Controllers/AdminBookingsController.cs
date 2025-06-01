@@ -21,18 +21,11 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return Challenge();
 
-            if (_http.DefaultRequestHeaders.Contains("x-user-id"))
-                _http.DefaultRequestHeaders.Remove("x-user-id");
-
-            _http.DefaultRequestHeaders.Add("x-user-id", userId);
             _http.DefaultRequestHeaders.Add("x-api-key", "fba16aa0-4bb4-4bb7-9201-d81937292329");
 
             var bookings = await _http
-                .GetFromJsonAsync<IEnumerable<BookingViewModel>>($"user-bookings/{userId}");
+                .GetFromJsonAsync<IEnumerable<BookingViewModel>>($"admin-get-all");
 
             return View(bookings);
         }
@@ -101,7 +94,7 @@ namespace WebApp.Controllers
         {
             _http.DefaultRequestHeaders.Add("x-api-key", "fba16aa0-4bb4-4bb7-9201-d81937292329");
 
-            var response = await _http.PostAsJsonAsync("user-create", formData);
+            var response = await _http.PostAsJsonAsync("admin-create", formData);
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Index", "Bookings");
