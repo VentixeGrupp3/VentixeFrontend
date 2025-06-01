@@ -85,8 +85,6 @@ public class UserBookingsController : Controller
 
     public IActionResult ReserveTickets(string eventId)
     {
-        decimal regularPrice = 100m;
-        decimal vipPrice = 250m;
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -102,6 +100,8 @@ public class UserBookingsController : Controller
     [HttpPost]
     public async Task<IActionResult> OrderTickets(BookingInfoViewModel formData)
     {
+        _http.DefaultRequestHeaders.Add("x-api-key", "1a76c263-4d83-4c98-b913-9029f9dfad7d");
+
         var response = await _http.PostAsJsonAsync("user-create", formData);
         
         if (response.IsSuccessStatusCode)
